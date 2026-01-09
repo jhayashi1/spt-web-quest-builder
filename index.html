@@ -26,7 +26,16 @@
                     <div class="flex gap-2" id="questActions">
                         <button id="importBtn" class="btn btn-secondary">Import</button>
                         <input type="file" id="importFile" accept=".json" class="hidden" />
-                        <button id="exportBtn" class="btn btn-primary">Export</button>
+                        <div class="relative" id="exportDropdown">
+                            <button id="exportBtn" class="btn btn-primary flex items-center gap-1">
+                                Export
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="exportMenu" class="hidden absolute right-0 mt-1 w-48 bg-tarkov-surface border border-tarkov-border rounded-lg shadow-lg z-50">
+                                <button id="exportAllBtn" class="w-full text-left px-4 py-2 hover:bg-tarkov-surface-light rounded-t-lg transition-colors">Export All Quests</button>
+                                <button id="exportCurrentBtn" class="w-full text-left px-4 py-2 hover:bg-tarkov-surface-light rounded-b-lg transition-colors">Export Current Quest</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

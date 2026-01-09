@@ -25,8 +25,8 @@ class QuestBuilder {
         this.rewardBuilder = new RewardBuilder();
         this.conditionBuilder = new ConditionBuilder();
         this.initializeUI();
-        this.bindEvents();
         this.initializeTabs();
+        this.bindEvents();
     }
 
     private bindEvents(): void {
@@ -36,8 +36,31 @@ class QuestBuilder {
         // Save Quest button
         document.getElementById('saveQuestBtn')?.addEventListener('click', () => this.saveCurrentQuest());
 
-        // Export button
-        document.getElementById('exportBtn')?.addEventListener('click', () => this.exportQuests());
+        // Export dropdown
+        const exportBtn = document.getElementById('exportBtn');
+        const exportMenu = document.getElementById('exportMenu');
+        
+        exportBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            exportMenu?.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            exportMenu?.classList.add('hidden');
+        });
+
+        // Export all quests
+        document.getElementById('exportAllBtn')?.addEventListener('click', () => {
+            this.exportQuests();
+            exportMenu?.classList.add('hidden');
+        });
+
+        // Export current quest
+        document.getElementById('exportCurrentBtn')?.addEventListener('click', () => {
+            this.exportCurrentQuest();
+            exportMenu?.classList.add('hidden');
+        });
 
         // Import button
         document.getElementById('importBtn')?.addEventListener('click', () => {
@@ -149,6 +172,20 @@ class QuestBuilder {
         }, reward, timing);
     }
 
+    private exportCurrentQuest(): void {
+        if (!this.currentQuestId) {
+            alert('No quest selected. Select a quest first.');
+            return;
+        }
+
+        const quest = this.quests[this.currentQuestId];
+        const exportData: QuestFile = { [this.currentQuestId]: quest };
+        const filename = `${quest.QuestName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
+        
+        downloadJson(exportData, filename);
+        this.showToast(`Exported: ${quest.QuestName}`);
+    }
+
     private exportQuests(): void {
         if (Object.keys(this.quests).length === 0) {
             alert('No quests to export');
@@ -156,7 +193,7 @@ class QuestBuilder {
         }
 
         downloadJson(this.quests, 'quests.json');
-        this.showToast('Quests exported!');
+        this.showToast(`Exported ${Object.keys(this.quests).length} quest(s)!`);
     }
 
     private getConditionsCount(quest: Quest): number {
@@ -207,7 +244,10 @@ class QuestBuilder {
         const assortTab = document.getElementById('assortBuilderTab');
         const questActions = document.getElementById('questActions');
 
+        console.log('Initializing tabs:', {tabQuests, tabAssort, questTab, assortTab});
+
         tabQuests?.addEventListener('click', () => {
+            console.log('Quest tab clicked');
             tabQuests.classList.add('active');
             tabAssort?.classList.remove('active');
             questTab?.classList.remove('hidden');
@@ -216,6 +256,7 @@ class QuestBuilder {
         });
 
         tabAssort?.addEventListener('click', () => {
+            console.log('Assort tab clicked');
             tabAssort.classList.add('active');
             tabQuests?.classList.remove('active');
             assortTab?.classList.remove('hidden');
@@ -224,6 +265,7 @@ class QuestBuilder {
 
             // Lazy-initialize the assort builder
             if (!this.assortBuilder) {
+                console.log('Creating AssortBuilder');
                 this.assortBuilder = new AssortBuilder('assortBuilderContainer');
             }
         });
