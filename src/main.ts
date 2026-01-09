@@ -41,7 +41,7 @@ class QuestBuilder {
         // Export dropdown
         const exportBtn = document.getElementById('exportBtn');
         const exportMenu = document.getElementById('exportMenu');
-        
+
         exportBtn?.addEventListener('click', (e) => {
             e.stopPropagation();
             exportMenu?.classList.toggle('hidden');
@@ -186,9 +186,9 @@ class QuestBuilder {
         }
 
         const quest = this.quests[this.currentQuestId];
-        const exportData: QuestFile = { [this.currentQuestId]: quest };
+        const exportData: QuestFile = {[this.currentQuestId]: quest};
         const filename = `${quest.QuestName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
-        
+
         downloadJson(exportData, filename);
         this.showToast(`Exported: ${quest.QuestName}`);
     }
@@ -252,7 +252,7 @@ class QuestBuilder {
         const assortTab = document.getElementById('assortBuilderTab');
         const questActions = document.getElementById('questActions');
 
-        console.log('Initializing tabs:', {tabQuests, tabAssort, questTab, assortTab});
+        console.log('Initializing tabs:', {assortTab, questTab, tabAssort, tabQuests});
 
         tabQuests?.addEventListener('click', () => {
             console.log('Quest tab clicked');
@@ -315,6 +315,24 @@ class QuestBuilder {
             option.textContent = faction.toUpperCase();
             factionSelect.appendChild(option);
         });
+    }
+
+    private loadFromStorage(): void {
+        try {
+            const stored = localStorage.getItem(QuestBuilder.STORAGE_KEY);
+            if (stored) {
+                this.quests = JSON.parse(stored);
+                this.updateQuestList();
+
+                // Load the first quest if available
+                const firstQuestId = Object.keys(this.quests)[0];
+                if (firstQuestId) {
+                    this.loadQuest(firstQuestId);
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load quests from storage:', err);
+        }
     }
 
     private loadQuest(id: string): void {
@@ -477,24 +495,6 @@ class QuestBuilder {
         this.updateQuestList();
         this.saveToStorage();
         this.showToast('Quest saved!');
-    }
-
-    private loadFromStorage(): void {
-        try {
-            const stored = localStorage.getItem(QuestBuilder.STORAGE_KEY);
-            if (stored) {
-                this.quests = JSON.parse(stored);
-                this.updateQuestList();
-                
-                // Load the first quest if available
-                const firstQuestId = Object.keys(this.quests)[0];
-                if (firstQuestId) {
-                    this.loadQuest(firstQuestId);
-                }
-            }
-        } catch (err) {
-            console.error('Failed to load quests from storage:', err);
-        }
     }
 
     private saveToStorage(): void {

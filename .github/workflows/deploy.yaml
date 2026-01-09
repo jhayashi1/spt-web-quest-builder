@@ -106,7 +106,12 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: s3 sync
         run: |
+          # Sync all files first
           aws s3 sync dist ${{ env.S3_BUCKET_NAME }} --delete
+          # Re-upload JS files with correct content-type
+          aws s3 cp dist ${{ env.S3_BUCKET_NAME }} --recursive --exclude "*" --include "*.js" --content-type "application/javascript"
+          # Re-upload CSS files with correct content-type  
+          aws s3 cp dist ${{ env.S3_BUCKET_NAME }} --recursive --exclude "*" --include "*.css" --content-type "text/css"
       - name: invalidate cloudfront cache
         run: |
           aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
