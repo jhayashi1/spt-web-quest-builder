@@ -105,6 +105,7 @@ jobs:
           role-session-name: spt-quest-builder-deploy
           aws-region: ${{ env.AWS_REGION }}
       - name: s3 sync
+        if: github.event_name == 'push'
         run: |
           # Sync all files first
           aws s3 sync dist ${{ env.S3_BUCKET_NAME }} --delete
