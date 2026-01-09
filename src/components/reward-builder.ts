@@ -87,18 +87,18 @@ export class RewardBuilder {
     private createDialog(): HTMLDialogElement {
         const dialog = document.createElement('dialog');
         dialog.id = 'rewardDialog';
-        dialog.className = 'bg-tarkov-surface border border-tarkov-border rounded-lg p-0 max-w-2xl w-full backdrop:bg-black/50';
+        dialog.className = 'bg-tarkov-surface border border-tarkov-border rounded-lg p-0 w-[calc(100%-1rem)] sm:w-full max-w-2xl mx-2 sm:mx-auto backdrop:bg-black/50';
 
         dialog.innerHTML = `
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-semibold text-tarkov-text">Add Reward</h2>
+            <div class="p-4 sm:p-6">
+                <div class="flex items-center justify-between mb-4 sm:mb-6">
+                    <h2 class="text-lg sm:text-xl font-semibold text-tarkov-text">Add Reward</h2>
                     <button type="button" id="closeRewardDialog" class="text-tarkov-text-muted hover:text-tarkov-text text-2xl">&times;</button>
                 </div>
 
                 <form id="rewardForm">
                     <!-- Common fields -->
-                    <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
                         <div class="form-group">
                             <label for="rewardType">Reward Type</label>
                             <select id="rewardType" name="rewardType" class="w-full"></select>

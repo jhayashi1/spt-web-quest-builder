@@ -592,7 +592,7 @@ class QuestBuilder {
             item.dataset.id = quest._id;
             item.innerHTML = `
                 <span class="truncate flex-1">${quest.QuestName}</span>
-                <button type="button" class="quest-delete-btn flex-shrink-0 w-6 h-6 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 text-tarkov-danger hover:text-red-400 hover:bg-tarkov-danger/20 rounded transition-all text-lg leading-none" data-id="${quest._id}">&times;</button>
+                <button type="button" class="quest-delete-btn flex-shrink-0 w-6 h-6 flex items-center justify-center cursor-pointer sm:opacity-0 sm:group-hover:opacity-100 text-tarkov-danger hover:text-red-400 hover:bg-tarkov-danger/20 rounded transition-all text-lg leading-none" data-id="${quest._id}">&times;</button>
             `;
             list.appendChild(item);
         });

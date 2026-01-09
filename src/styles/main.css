@@ -33,7 +33,7 @@ textarea {
 
 /* Button styles */
 .btn {
-    @apply px-4 py-2 rounded font-medium transition-colors cursor-pointer;
+    @apply px-3 sm:px-4 py-1.5 sm:py-2 rounded font-medium transition-colors cursor-pointer text-sm sm:text-base;
 }
 
 .btn-primary {
@@ -50,7 +50,7 @@ textarea {
 
 /* Card/Panel styles */
 .panel {
-    @apply bg-tarkov-surface border border-tarkov-border rounded-lg p-4;
+    @apply bg-tarkov-surface border border-tarkov-border rounded-lg p-3 sm:p-4;
 }
 
 /* Label styles */
@@ -60,12 +60,12 @@ label {
 
 /* Form group */
 .form-group {
-    @apply mb-4;
+    @apply mb-3 sm:mb-4;
 }
 
 /* Dialog/Modal styles */
 dialog {
-    @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0;
+    @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0 max-h-[90vh] overflow-y-auto w-[calc(100%-2rem)] sm:w-auto;
 }
 
 dialog::backdrop {

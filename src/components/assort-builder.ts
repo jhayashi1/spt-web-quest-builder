@@ -72,17 +72,17 @@ export class AssortBuilder {
     public render(): void {
         this.container.innerHTML = `
             <div class="panel">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-semibold text-tarkov-text">Trader Assort Builder</h2>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 sm:mb-6">
+                    <h2 class="text-lg sm:text-xl font-semibold text-tarkov-text">Trader Assort Builder</h2>
                     <div class="flex gap-2">
-                        <button type="button" id="importAssortBtn" class="btn btn-secondary">Import</button>
+                        <button type="button" id="importAssortBtn" class="btn btn-secondary text-sm">Import</button>
                         <input type="file" id="importAssortFile" accept=".json" class="hidden" />
-                        <button type="button" id="exportAssortBtn" class="btn btn-primary">Export</button>
+                        <button type="button" id="exportAssortBtn" class="btn btn-primary text-sm">Export</button>
                     </div>
                 </div>
 
                 <!-- Trader Selection -->
-                <div class="form-group mb-6">
+                <div class="form-group mb-4 sm:mb-6">
                     <label for="assortTrader">Trader</label>
                     <select id="assortTrader" class="w-full">
                         ${Object.keys(TRADERS).map(t => `<option value="${t}" ${t === this.currentTrader ? 'selected' : ''}>${t}</option>`).join('')}
@@ -90,10 +90,10 @@ export class AssortBuilder {
                 </div>
 
                 <!-- Add Item Form -->
-                <div class="bg-tarkov-bg border border-tarkov-border rounded-lg p-4 mb-6">
-                    <h3 class="font-semibold mb-4" id="itemFormTitle">Add New Item</h3>
+                <div class="bg-tarkov-bg border border-tarkov-border rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+                    <h3 class="font-semibold mb-3 sm:mb-4 text-sm sm:text-base" id="itemFormTitle">Add New Item</h3>
                     <form id="assortItemForm">
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
                             <div class="form-group">
                                 <label for="itemTpl">Item Template ID</label>
                                 <input type="text" id="itemTpl" name="itemTpl" class="w-full" placeholder="e.g., 5449016a4bdc2d6f028b456f" required />
@@ -102,13 +102,13 @@ export class AssortBuilder {
                                 <label for="itemName">Display Name (optional)</label>
                                 <input type="text" id="itemName" name="itemName" class="w-full" placeholder="Friendly name" />
                             </div>
-                            <div class="form-group">
+                            <div class="form-group sm:col-span-2 md:col-span-1">
                                 <label for="itemCount">Stack Count</label>
                                 <input type="number" id="itemCount" name="count" class="w-full" min="1" value="1" />
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
                             <div class="form-group">
                                 <label for="itemPrice">Price</label>
                                 <input type="number" id="itemPrice" name="price" class="w-full" min="1" value="1000" required />
@@ -144,15 +144,15 @@ export class AssortBuilder {
                         </div>
 
                         <div class="flex gap-2">
-                            <button type="submit" class="btn btn-primary" id="addItemBtn">Add Item</button>
-                            <button type="button" class="btn btn-secondary hidden" id="cancelEditBtn">Cancel</button>
+                            <button type="submit" class="btn btn-primary text-sm" id="addItemBtn">Add Item</button>
+                            <button type="button" class="btn btn-secondary text-sm hidden" id="cancelEditBtn">Cancel</button>
                         </div>
                     </form>
                 </div>
 
                 <!-- Items List -->
-                <div class="bg-tarkov-bg border border-tarkov-border rounded-lg p-4">
-                    <h3 class="font-semibold mb-4">Assort Items (${this.assortItems.length})</h3>
+                <div class="bg-tarkov-bg border border-tarkov-border rounded-lg p-3 sm:p-4">
+                    <h3 class="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Assort Items (${this.assortItems.length})</h3>
                     <div id="assortItemsList" class="space-y-2 max-h-96 overflow-y-auto">
                         ${this.assortItems.length === 0 ? '<p class="text-tarkov-text-muted">No items added yet.</p>' : this.renderItemsList()}
                     </div>
