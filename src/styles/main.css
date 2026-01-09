@@ -62,3 +62,25 @@ label {
 .form-group {
     @apply mb-4;
 }
+
+/* Dialog/Modal styles */
+dialog {
+    @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0;
+}
+
+dialog::backdrop {
+    @apply bg-black/50;
+}
+
+/* Tab navigation */
+.tab-btn {
+    @apply text-tarkov-text-muted hover:text-tarkov-text;
+}
+
+.tab-btn.active {
+    @apply bg-tarkov-surface text-tarkov-accent;
+}
+
+.tab-content.hidden {
+    display: none;
+}

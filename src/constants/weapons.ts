@@ -1,0 +1,208 @@
+/** Weapon categories and their template IDs for elimination conditions */
+export interface WeaponCategory {
+    category: string;
+    categoryId: string;
+    weapons: WeaponEntry[];
+}
+
+export interface WeaponEntry {
+    id: string;
+    name: string;
+}
+
+export const WEAPON_CATEGORIES: WeaponCategory[] = [
+    {
+        category  : 'Carbines',
+        categoryId: '5447b5fc4bdc2d87278b4567',
+        weapons   : [
+            {id: '57c44b372459772d2b39b8ce', name: 'AS VAL 9x39'},
+            {id: '574d967124597745970e7c94', name: 'SKS 7.62x39'},
+            {id: '643ea5b23db6f9f57107d9fd', name: 'SVT-40 7.62x54R'},
+            {id: '6410733d5dd49d77bd07847e', name: 'AVT-40 7.62x54R'},
+            {id: '651450ce0e00edc794068371', name: 'SR-3M 9x39'},
+        ],
+    },
+    {
+        category  : 'Assault Rifles',
+        categoryId: '5447b5f14bdc2d61278b4567',
+        weapons   : [
+            {id: '5ac66d015acfc400180ae6e4', name: 'AK-102 5.56x45'},
+            {id: '5bf3e0490db834001d2c4a9c', name: 'AKS-74 5.45x39'},
+            {id: '62e7c4fba689e8c9c50dfc38', name: 'AUG A1 5.56x45'},
+            {id: '6499849fc93611967b034949', name: 'AK-12 5.45x39'},
+            {id: '5ac66d725acfc43b321d4b60', name: 'AK-104 7.62x39'},
+            {id: '5a0ec13bfcdbcb00165aa685', name: 'AKMN 7.62x39'},
+            {id: '5ac66cb05acfc40198510a10', name: 'AK-101 5.56x45'},
+            {id: '59ff346386f77477562ff5e2', name: 'AKMS 7.62x39'},
+            {id: '5ab8e9fcd8ce870019439434', name: 'AKS-74N 5.45x39'},
+            {id: '628b9c37a733087d0d7fe84b', name: 'AK-545 Short 5.45x39'},
+            {id: '5c488a752e221602b412af63', name: 'MDR 5.56x45'},
+            {id: '5644bd2b4bdc2d3b4c8b4572', name: 'AK-74N 5.45x39'},
+            {id: '6183afd850224f204c1da514', name: 'Mk17 7.62x51'},
+            {id: '57dc2fa62459775949412633', name: 'AKS-74U 5.45x39'},
+            {id: '59d6088586f774275f37482f', name: 'AKM 7.62x39'},
+            {id: '5dcbd56fdbd3d91b3e5468d5', name: 'MDR 7.62x51'},
+            {id: '5ac66d2e5acfc43b321d4b53', name: 'AK-103 7.62x39'},
+            {id: '5bb2475ed4351e00853264e3', name: 'HK416A5 5.56x45'},
+            {id: '5ac66d9b5acfc4001633997a', name: 'AK-105 5.45x39'},
+            {id: '65290f395ae2ae97b80fdf2d', name: 'MCX Spear 6.8x51'},
+            {id: '628b5638ad252a16da6dd245', name: 'AK-545 5.45x39'},
+            {id: '5447a9cd4bdc2dbd208b4567', name: 'M4A1 5.56x45'},
+            {id: '5cadfbf7ae92152ac412eeef', name: 'ASh-12 12.7x55'},
+            {id: '5ac4cd105acfc40016339859', name: 'AK-74M 5.45x39'},
+            {id: '5b0bbe4e5acfc40dc528a72d', name: 'SA-58 7.62x51'},
+            {id: '623063e994fc3f7b302a9696', name: 'G36 5.56x45'},
+            {id: '5c07c60e0db834002330051f', name: 'ADAR 2-15 5.56x45'},
+            {id: '5839a40f24597726f856b511', name: 'AKS-74UB 5.45x39'},
+            {id: '5abcbc27d8ce8700182eceeb', name: 'AKMSN 7.62x39'},
+            {id: '6184055050224f204c1da540', name: 'Mk16 5.56x45'},
+            {id: '5bf3e03b0db834001d2c4a9c', name: 'AK-74 5.45x39'},
+            {id: '583990e32459771419544dd2', name: 'AKS-74UN 5.45x39'},
+            {id: '5d4d617f86f77449c463d107', name: 'TX-15 DML'},
+        ],
+    },
+    {
+        category  : 'Shotguns',
+        categoryId: '5447b6094bdc2dc3278b4567',
+        weapons   : [
+            {id: '6259b864ebedf17603599e88', name: 'M3 Super 90 12g'},
+            {id: '5a38e6bac4a2826c6e06d79b', name: 'TOZ-106 20g'},
+            {id: '61f7c9e189e6fb1a5e3ea78d', name: 'MP-18 Multi'},
+            {id: '5e870397991fd70db46995c8', name: 'Mossberg 590A1 12g'},
+            {id: '5580223e4bdc2d1c128b457f', name: 'MR-43E 1C 12g'},
+            {id: '54491c4f4bdc2db1078b4568', name: 'MR-133 12g'},
+            {id: '64748cb8de82c85eaf0a273a', name: 'MR-43 Sawed-off 12g'},
+            {id: '576165642459773c7a400233', name: 'Saiga-12K 10 12g'},
+            {id: '674fe9a75e51f1c47c04ec23', name: 'Saiga-12K FA 12g'},
+            {id: '5e848cc2988a8701445df1e8', name: 'KS-23M 23x75'},
+            {id: '5a7828548dc32e5a9c28b516', name: 'Model 870 12g'},
+            {id: '56dee2bdd2720bc8328b4567', name: 'MR-153 12g'},
+            {id: '606dae0ab0e443224b421bb7', name: 'MP-155 12g'},
+            {id: '66ffa9b66e19cc902401c5e8', name: 'AA-12 Gen 1 12g'},
+            {id: '67124dcfa3541f2a1f0e788b', name: 'AA-12 Gen 2 12g'},
+        ],
+    },
+    {
+        category  : 'SMGs',
+        categoryId: '5447b5e04bdc2d62278b4567',
+        weapons   : [
+            {id: '5fc3f2d5900b1d5091531e57', name: 'Vector Gen2 9x19'},
+            {id: '5fc3e272f8b6a877a729eac5', name: 'UMP .45 ACP'},
+            {id: '6680304edadb7aa61d00cef0', name: 'UZI Pro Pistol 9x19'},
+            {id: '66992b349950f5f4cd06029f', name: 'UZI 9x19'},
+            {id: '5cc82d76e24e8d00134b4b83', name: 'P90 5.7x28'},
+            {id: '5fb64bc92b1b027b1f50bcf2', name: 'Vector Gen2 .45 ACP'},
+            {id: '668e71a8dadf42204c032ce1', name: 'UZI Pro SMG 9x19'},
+            {id: '5de7bd7bfd6b4e6e2276dc25', name: 'MP9-N 9x19'},
+            {id: '62e14904c2699c0ec93adc47', name: 'SR-2M Veresk 9x21'},
+            {id: '60339954d62c9b14ed777c06', name: 'STM-9 9x19'},
+            {id: '58948c8e86f77409493f7266', name: 'MPX 9x19'},
+            {id: '5e00903ae9dc277128008b87', name: 'MP9 9x19'},
+            {id: '5d2f0d8048f0356c925bc3b0', name: 'MP5 Kurz 9x19'},
+            {id: '5ea03f7400685063ec28bfa8', name: 'PPSh-41 7.62x25'},
+            {id: '57d14d2524597714373db789', name: 'PP-91 9x18PM'},
+            {id: '59f9cabd86f7743a10721f46', name: 'Saiga-9 9x19'},
+            {id: '59984ab886f7743e98271174', name: 'PP-19-01 9x19'},
+            {id: '57f3c6bd24597738e730fa2f', name: 'PP-91-01 9x18PM'},
+            {id: '5bd70322209c4d00d7167b8f', name: 'MP7A2 4.6x30'},
+            {id: '57f4c844245977379d5c14d1', name: 'PP-9 9x18PMM'},
+            {id: '5ba26383d4351e00334c93d9', name: 'MP7A1 4.6x30'},
+            {id: '5926bb2186f7744b1c6c6e60', name: 'MP5 Navy3 9x19'},
+        ],
+    },
+    {
+        category  : 'Handguns',
+        categoryId: '5447b5cf4bdc2d65278b4567',
+        weapons   : [
+            {id: '669fa39b48fc9f8db6035a0c', name: 'Desert Eagle L6 .50 AE'},
+            {id: '5b1fa9b25acfc40018633c01', name: 'Glock 18C 9x19'},
+            {id: '669fa3d876116c89840b1217', name: 'Desert Eagle L6 Tiger .50 AE'},
+            {id: '5e81c3cbac2bb513793cdc75', name: 'M1911A1 .45 ACP'},
+            {id: '669fa3f88abd2662d80eee77', name: 'Desert Eagle L5 .50 AE'},
+            {id: '56e0598dd2720bb5668b45a6', name: 'PB 9x18PM'},
+            {id: '5a7ae0c351dfba0017554310', name: 'Glock 17 9x19'},
+            {id: '602a9740da11d6478d5a06dc', name: 'PL-15 9x19'},
+            {id: '63088377b5cd696784087147', name: 'Glock 19X 9x19'},
+            {id: '5d67abc1a4b93614ec50137f', name: 'Five-seveN FDE 5.7x28'},
+            {id: '579204f224597773d619e051', name: 'PM Threaded 9x18PM'},
+            {id: '576a581d2459771e7b1bc4f1', name: 'MP-443 9x19'},
+            {id: '5448bd6b4bdc2dfc2f8b4569', name: 'PM 9x18PM'},
+            {id: '5abccb7dd8ce87001773e277', name: 'APB 9x18PM'},
+            {id: '66015072e9f84d5680039678', name: 'PD 20x1mm'},
+            {id: '5b3b713c5acfc4330140bd8d', name: 'TT Gold 7.62x25TT'},
+            {id: '56d59856d2720bd8418b456a', name: 'P226R 9x19'},
+            {id: '5a17f98cfcdbcb0980087290', name: 'APS 9x18PM'},
+            {id: '5cadc190ae921500103bb3b6', name: 'M9A3 9x19'},
+            {id: '668fe5a998b5ad715703ddd6', name: 'Desert Eagle Mk19 .50 AE'},
+            {id: '59f98b4986f7746f546d2cef', name: 'SR-1MP 9x21'},
+            {id: '571a12c42459771f627b58a0', name: 'TT 7.62x25TT'},
+            {id: '669fa409933e898cce0c2166', name: 'Desert Eagle L5 9x33R'},
+            {id: '5d3eb3b0a4b93615055e84d2', name: 'Five-seveN 5.7x28'},
+            {id: '5f36a0e5fbf956000b716b65', name: 'M45A1 .45 ACP'},
+            {id: '6193a720f8ee7e52e42109ed', name: 'USP .45'},
+            {id: '624c2e8614da335f1e034d8c', name: 'Rhino 200DS 9x19'},
+            {id: '60db29ce99594040e04c4a27', name: 'MC 255 12g'},
+            {id: '633ec7c2a6918cb895019c6c', name: 'RSh-12 12.7x55'},
+            {id: '61a4c8884f95bc3b2c5dc96f', name: 'Rhino 50DS 9x33R'},
+        ],
+    },
+    {
+        category  : 'Marksman Rifles',
+        categoryId: '5447b6194bdc2d67278b4567',
+        weapons   : [
+            {id: '5f2a9575926fd9352339381f', name: 'RFB 7.62x51'},
+            {id: '5a367e5dc4a282000e49738f', name: 'RSASS 7.62x51'},
+            {id: '5fc22d7c187fea44d52eda44', name: 'Mk18 Mjolnir .338 LM'},
+            {id: '6176aca650224f204c1da3fb', name: 'G28 7.62x51'},
+            {id: '57838ad32459774a17445cd2', name: 'VSS 9x39'},
+            {id: '5c46fbd72e2216398b5a8c9c', name: 'SVDS 7.62x54R'},
+            {id: '5aafa857e5b5b00018480968', name: 'M1A 7.62x51'},
+            {id: '5df8ce05b11454561e39243b', name: 'SR-25 7.62x51'},
+        ],
+    },
+    {
+        category  : 'Machine Guns',
+        categoryId: '5447bed64bdc2d97278b4568',
+        weapons   : [
+            {id: '5beed0f50db834001c062b12', name: 'RPK-16 5.45x39'},
+            {id: '661cec09b2c6356b4d0c7a36', name: 'M60E6 FDE 7.62x51'},
+            {id: '64637076203536ad5600c990', name: 'PKM 7.62x54R'},
+            {id: '661ceb1b9311543c7104149b', name: 'M60E6 7.62x51'},
+            {id: '64ca3d3954fc657e230529cc', name: 'PKP 7.62x54R'},
+            {id: '6513ef33e06849f06c0957ca', name: 'RPD 7.62x39'},
+            {id: '65fb023261d5829b2d090755', name: 'M60E4 7.62x51'},
+            {id: '65268d8ecb944ff1e90ea385', name: 'RPDN 7.62x39'},
+        ],
+    },
+    {
+        category  : 'Grenade Launchers',
+        categoryId: '5447bedf4bdc2d87278b4568',
+        weapons   : [
+            {id: '5e81ebcd8e146c7080625e15', name: 'FN40GL 40x46'},
+            {id: '6275303a9f372d6ea97f9ec7', name: 'M32A1 MSGL 40x46'},
+        ],
+    },
+    {
+        category  : 'Sniper Rifles',
+        categoryId: '5447b6254bdc2dc3278b4568',
+        weapons   : [
+            {id: '627e14b21713922ded6f2c15', name: 'AXMC .338 LM'},
+            {id: '5de652c31b7e3716273428be', name: 'VPO-215 .366 TKM'},
+            {id: '55801eed4bdc2d89578b4588', name: 'SV-98 7.62x54R'},
+            {id: '673cab3e03c6a20581028bc1', name: 'TRG-M10 .338 LM'},
+            {id: '5ae08f0a5acfc408fb1398a1', name: 'Mosin Rifle 7.62x54R'},
+            {id: '5bfea6e90db834001a669119', name: 'Model 700 7.62x51'},
+            {id: '5bfd297f0db834001a669119', name: 'Mosin Infantry 7.62x54R'},
+            {id: '5df24cf80dee1b22f862e9bc', name: 'T-5000 7.62x51'},
+            {id: '588892092459774ac91d4b11', name: 'DVL-10 7.62x51'},
+        ],
+    },
+];
+
+/** Flat list of all weapons for search */
+export const ALL_WEAPONS: WeaponEntry[] = WEAPON_CATEGORIES.flatMap(cat => cat.weapons);
+
+/** Get weapon name by ID */
+export const getWeaponName = (id: string): string | undefined => {
+    return ALL_WEAPONS.find(w => w.id === id)?.name;
+};

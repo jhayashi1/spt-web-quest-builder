@@ -19,98 +19,96 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v3
-      - name: pnpm setup
-        uses: pnpm/action-setup@v4
-      - name: node setup
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: package.json
-          cache:             pnpm
+      - name: bun setup
+        uses: oven-sh/setup-bun@v2
       - name: install
-        run:  pnpm install
+        run:  bun install
       - name: types
-        run:  pnpm run types
+        run:  bun run types
       - name: lint
-        run:  pnpm run lint
-      - name: build frontend
-        run:  pnpm run build:frontend
-      - name: build lambda
-        run:  pnpm run build:lambda
+        run:  bun run lint
+      - name: build
+        run:  bun run build
       - name: upload frontend artifact
         uses: actions/upload-artifact@v4
         with:
             name: frontend
             path: dist/
-  # terraform-plan:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   container: hashicorp/terraform:1.13
-  #   steps:
-  #     - name: checkout code
-  #       uses: actions/checkout@v3
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: lambda
-  #         path: terraform 
-  #     - name: configure aws credentials
-  #       uses: aws-actions/configure-aws-credentials@v3
-  #       with:
-  #         role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_NUMBER }}:role/${{ secrets.AWS_DEPLOY_ROLE }}
-  #         role-session-name: TODO
-  #         aws-region: ${{ env.AWS_REGION }}
-  #     - name: terraform plan
-  #       run: |
-  #         cd terraform
-  #         terraform init
-  #         terraform plan -out tfplan
-  # terraform-apply:
-  #   if: github.event_name == 'push'
-  #   needs: terraform-plan
-  #   runs-on: ubuntu-latest
-  #   container: hashicorp/terraform:1.13
-  #   steps:
-  #     - name: checkout code
-  #       uses: actions/checkout@v3
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: lambda
-  #         path: terraform 
-  #     - name: configure aws credentials
-  #       uses: aws-actions/configure-aws-credentials@v3
-  #       with:
-  #         role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_NUMBER }}:role/${{ secrets.AWS_DEPLOY_ROLE }}
-  #         role-session-name: TODO
-  #         aws-region: ${{ env.AWS_REGION }}
-  #     - name: terraform plan
-  #       run: |
-  #         cd terraform
-  #         terraform init
-  #         terraform plan -out tfplan
-  #     - name: terraform apply
-  #       run: |
-  #         cd terraform
-  #         terraform init
-  #         terraform apply tfplan
-  # s3-sync:
-  #   if: github.event_name == 'push'
-  #   needs: terraform-apply
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: checkout code
-  #       uses: actions/checkout@v3
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: frontend
-  #         path: dist 
-  #     - name: configure aws credentials
-  #       uses: aws-actions/configure-aws-credentials@v3
-  #       with:
-  #         role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_NUMBER }}:role/${{ secrets.AWS_DEPLOY_ROLE }}
-  #         role-session-name: portfolio-deploy
-  #         aws-region: ${{ env.AWS_REGION }}
-  #     - name: s3 sync
-  #       run: |
-  #         aws s3 sync dist ${{ env.S3_BUCKET_NAME }}
+
+  terraform-plan:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_NUMBER }}:role/${{ secrets.AWS_DEPLOY_ROLE }}
+          role-session-name: spt-quest-builder-terraform
+          aws-region: ${{ env.AWS_REGION }}
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: terraform init
+        working-directory: terraform
+        run: terraform init
+      - name: terraform plan
+        working-directory: terraform
+        run: terraform plan -out=tfplan
+      - name: upload terraform plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: terraform/tfplan
+
+  terraform-apply:
+    if: github.event_name == 'push'
+    needs: terraform-plan
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_NUMBER }}:role/${{ secrets.AWS_DEPLOY_ROLE }}
+          role-session-name: spt-quest-builder-terraform
+          aws-region: ${{ env.AWS_REGION }}
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: download terraform plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: terraform
+      - name: terraform init
+        working-directory: terraform
+        run: terraform init
+      - name: terraform apply
+        working-directory: terraform
+        run: terraform apply -auto-approve tfplan
+
+  s3-sync:
+    if: github.event_name == 'push'
+    needs: terraform-apply
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend
+          path: dist 
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_NUMBER }}:role/${{ secrets.AWS_DEPLOY_ROLE }}
+          role-session-name: spt-quest-builder-deploy
+          aws-region: ${{ env.AWS_REGION }}
+      - name: s3 sync
+        run: |
+          aws s3 sync dist ${{ env.S3_BUCKET_NAME }} --delete
+      - name: invalidate cloudfront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"

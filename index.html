@@ -17,17 +17,26 @@
         <header class="bg-tarkov-surface border-b border-tarkov-border px-6 py-4">
             <div class="flex items-center justify-between max-w-7xl mx-auto">
                 <h1 class="text-2xl font-[Asap] text-tarkov-accent">SPT Quest Builder</h1>
-                <div class="flex gap-2">
-                    <button id="importBtn" class="btn btn-secondary">Import</button>
-                    <input type="file" id="importFile" accept=".json" class="hidden" />
-                    <button id="exportBtn" class="btn btn-primary">Export</button>
+                <div class="flex items-center gap-4">
+                    <!-- Tab Navigation -->
+                    <nav class="flex gap-1 bg-tarkov-bg rounded-lg p-1">
+                        <button id="tabQuests" class="tab-btn active px-4 py-2 rounded text-sm font-medium transition-colors">Quests</button>
+                        <button id="tabAssort" class="tab-btn px-4 py-2 rounded text-sm font-medium transition-colors">Assort</button>
+                    </nav>
+                    <div class="flex gap-2" id="questActions">
+                        <button id="importBtn" class="btn btn-secondary">Import</button>
+                        <input type="file" id="importFile" accept=".json" class="hidden" />
+                        <button id="exportBtn" class="btn btn-primary">Export</button>
+                    </div>
                 </div>
             </div>
         </header>
 
         <!-- Main content -->
         <main class="max-w-7xl mx-auto p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Quest Builder Tab -->
+            <div id="questBuilderTab" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <!-- Quest List Sidebar -->
                 <aside class="lg:col-span-1">
                     <div class="panel">
@@ -82,6 +91,11 @@
                                 <label for="faction">Faction</label>
                                 <select id="faction" name="faction" class="w-full"></select>
                             </div>
+
+                            <div class="form-group">
+                                <label for="imagePath">Quest Icon Path</label>
+                                <input type="text" id="imagePath" name="imagePath" class="w-full" placeholder="/files/quest/icon/quest.png" />
+                            </div>
                         </div>
 
                         <!-- Description -->
@@ -89,6 +103,47 @@
                             <label for="description">Description</label>
                             <textarea id="description" name="description" rows="3" class="w-full" placeholder="Quest description..."></textarea>
                         </div>
+
+                        <!-- Locale Messages (Collapsible) -->
+                        <details class="mb-6 bg-tarkov-bg border border-tarkov-border rounded-lg">
+                            <summary class="p-4 cursor-pointer font-semibold text-tarkov-text hover:text-tarkov-accent">
+                                Quest Messages (Locale Text)
+                            </summary>
+                            <div class="p-4 pt-0 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label for="acceptPlayerMessage">Accept Message</label>
+                                    <textarea id="acceptPlayerMessage" name="acceptPlayerMessage" rows="2" class="w-full" placeholder="Message shown when player accepts quest"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="declinePlayerMessage">Decline Message</label>
+                                    <textarea id="declinePlayerMessage" name="declinePlayerMessage" rows="2" class="w-full" placeholder="Message shown when player declines quest"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="completePlayerMessage">Complete Message</label>
+                                    <textarea id="completePlayerMessage" name="completePlayerMessage" rows="2" class="w-full" placeholder="Message shown when player completes quest"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="startedMessageText">Started Message</label>
+                                    <textarea id="startedMessageText" name="startedMessageText" rows="2" class="w-full" placeholder="Message shown when quest starts"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="successMessageText">Success Message</label>
+                                    <textarea id="successMessageText" name="successMessageText" rows="2" class="w-full" placeholder="Message shown on quest success"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="failMessageText">Fail Message</label>
+                                    <textarea id="failMessageText" name="failMessageText" rows="2" class="w-full" placeholder="Message shown on quest failure"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="changeQuestMessageText">Change Quest Message</label>
+                                    <textarea id="changeQuestMessageText" name="changeQuestMessageText" rows="2" class="w-full" placeholder="Message shown when quest changes"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="note">Note</label>
+                                    <textarea id="note" name="note" rows="2" class="w-full" placeholder="Additional notes for the quest"></textarea>
+                                </div>
+                            </div>
+                        </details>
 
                         <!-- Checkboxes -->
                         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
@@ -120,7 +175,7 @@
                             <div class="bg-tarkov-bg border border-tarkov-border rounded-lg p-4">
                                 <div class="flex items-center justify-between mb-3">
                                     <h3 class="font-semibold">Conditions (Tasks)</h3>
-                                    <button type="button" id="addConditionBtn" class="text-tarkov-accent hover:text-tarkov-accent-hover text-sm">+ Add</button>
+                                    <button type="button" id="addConditionBtn" class="text-tarkov-accent hover:text-tarkov-accent-hover text-sm border border-tarkov-accent rounded px-2 py-1 hover:bg-tarkov-accent/10">+ Add</button>
                                 </div>
                                 <div id="conditionsList" class="space-y-2 text-sm text-tarkov-text-muted">
                                     <p>No conditions added yet.</p>
@@ -131,7 +186,7 @@
                             <div class="bg-tarkov-bg border border-tarkov-border rounded-lg p-4">
                                 <div class="flex items-center justify-between mb-3">
                                     <h3 class="font-semibold">Rewards</h3>
-                                    <button type="button" id="addRewardBtn" class="text-tarkov-accent hover:text-tarkov-accent-hover text-sm">+ Add</button>
+                                    <button type="button" id="addRewardBtn" class="text-tarkov-accent hover:text-tarkov-accent-hover text-sm border border-tarkov-accent rounded px-2 py-1 hover:bg-tarkov-accent/10">+ Add</button>
                                 </div>
                                 <div id="rewardsList" class="space-y-2 text-sm text-tarkov-text-muted">
                                     <p>No rewards added yet.</p>
@@ -140,6 +195,12 @@
                         </div>
                     </form>
                 </section>
+                </div>
+            </div>
+
+            <!-- Assort Builder Tab -->
+            <div id="assortBuilderTab" class="tab-content hidden">
+                <div id="assortBuilderContainer"></div>
             </div>
         </main>
 

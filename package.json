@@ -4,7 +4,7 @@
     "description": "Web-based SPT Quest Builder",
     "main": "index.ts",
     "type": "module",
-    "packageManager": "pnpm@10.20.0",
+    "packageManager": "bun@1.2.5",
     "scripts": {
         "dev": "vite",
         "start": "vite",
@@ -13,7 +13,7 @@
         "types": "tsc --noEmit"
     },
     "engines": {
-        "node": "24.10.0"
+        "bun": "1.2.5"
     },
     "author": "jhayashi1",
     "dependencies": {
