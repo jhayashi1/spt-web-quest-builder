@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" href="favicon.ico" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Asap:wght@700&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>SPT Quest Builder</title>
+    </head>
+    <body class="min-h-screen font-[Mulish]">
+        <!-- Toast notification -->
+        <div id="toast" class="fixed top-4 right-4 bg-tarkov-accent text-tarkov-bg px-4 py-2 rounded shadow-lg opacity-0 transition-opacity duration-300 z-50"></div>
+
+        <!-- Header -->
+        <header class="bg-tarkov-surface border-b border-tarkov-border px-6 py-4">
+            <div class="flex items-center justify-between max-w-7xl mx-auto">
+                <h1 class="text-2xl font-[Asap] text-tarkov-accent">SPT Quest Builder</h1>
+                <div class="flex gap-2">
+                    <button id="importBtn" class="btn btn-secondary">Import</button>
+                    <input type="file" id="importFile" accept=".json" class="hidden" />
+                    <button id="exportBtn" class="btn btn-primary">Export</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main content -->
+        <main class="max-w-7xl mx-auto p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Quest List Sidebar -->
+                <aside class="lg:col-span-1">
+                    <div class="panel">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold">Quests</h2>
+                            <button id="newQuestBtn" class="btn btn-primary text-sm">+ New</button>
+                        </div>
+                        <div id="questList" class="space-y-1 max-h-[60vh] overflow-y-auto">
+                            <p class="text-tarkov-text-muted text-sm">No quests yet. Create one!</p>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Quest Form -->
+                <section class="lg:col-span-3">
+                    <form id="questForm" class="panel">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-lg font-semibold">Quest Details</h2>
+                            <div class="flex gap-2">
+                                <button type="button" id="deleteQuestBtn" class="btn btn-danger text-sm">Delete</button>
+                                <button type="button" id="saveQuestBtn" class="btn btn-primary text-sm">Save Quest</button>
+                            </div>
+                        </div>
+
+                        <div class="text-sm text-tarkov-text-muted mb-4">
+                            Quest ID: <span id="questIdDisplay" class="font-mono text-tarkov-accent">-</span>
+                        </div>
+
+                        <!-- Basic Info -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div class="form-group">
+                                <label for="questName">Quest Name</label>
+                                <input type="text" id="questName" name="questName" class="w-full" placeholder="Enter quest name" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="trader">Trader</label>
+                                <select id="trader" name="trader" class="w-full"></select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="location">Location</label>
+                                <select id="location" name="location" class="w-full"></select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="questType">Quest Type</label>
+                                <select id="questType" name="questType" class="w-full"></select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="faction">Faction</label>
+                                <select id="faction" name="faction" class="w-full"></select>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group mb-6">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" rows="3" class="w-full" placeholder="Quest description..."></textarea>
+                        </div>
+
+                        <!-- Checkboxes -->
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="instantComplete" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent focus:ring-tarkov-accent" />
+                                <span class="text-sm">Instant Complete</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="restartable" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent focus:ring-tarkov-accent" />
+                                <span class="text-sm">Restartable</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="secretQuest" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent focus:ring-tarkov-accent" />
+                                <span class="text-sm">Secret Quest</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="isKey" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent focus:ring-tarkov-accent" />
+                                <span class="text-sm">Is Key</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="canShowNotifications" checked class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent focus:ring-tarkov-accent" />
+                                <span class="text-sm">Show Notifications</span>
+                            </label>
+                        </div>
+
+                        <!-- Tasks & Rewards Sections (placeholder for expansion) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Conditions/Tasks -->
+                            <div class="bg-tarkov-bg border border-tarkov-border rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="font-semibold">Conditions (Tasks)</h3>
+                                    <button type="button" id="addConditionBtn" class="text-tarkov-accent hover:text-tarkov-accent-hover text-sm">+ Add</button>
+                                </div>
+                                <div id="conditionsList" class="space-y-2 text-sm text-tarkov-text-muted">
+                                    <p>No conditions added yet.</p>
+                                </div>
+                            </div>
+
+                            <!-- Rewards -->
+                            <div class="bg-tarkov-bg border border-tarkov-border rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="font-semibold">Rewards</h3>
+                                    <button type="button" id="addRewardBtn" class="text-tarkov-accent hover:text-tarkov-accent-hover text-sm">+ Add</button>
+                                </div>
+                                <div id="rewardsList" class="space-y-2 text-sm text-tarkov-text-muted">
+                                    <p>No rewards added yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </main>
+
+        <script type="module" src="./src/main.ts"></script>
+    </body>
+</html>

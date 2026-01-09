@@ -1,0 +1,64 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* Tarkov-inspired dark theme */
+@theme {
+    --color-tarkov-bg: #0d0d0d;
+    --color-tarkov-surface: #1a1a1a;
+    --color-tarkov-surface-light: #262626;
+    --color-tarkov-border: #333333;
+    --color-tarkov-border-light: #444444;
+    --color-tarkov-text: #e5e5e5;
+    --color-tarkov-text-muted: #a3a3a3;
+    --color-tarkov-accent: #d4a84b;
+    --color-tarkov-accent-hover: #e6bc5f;
+    --color-tarkov-danger: #ef4444;
+    --color-tarkov-success: #22c55e;
+}
+
+/* Base styles */
+body {
+    @apply bg-tarkov-bg text-tarkov-text font-sans antialiased;
+}
+
+/* Form input defaults */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    @apply bg-tarkov-surface border border-tarkov-border rounded px-3 py-2 text-tarkov-text 
+           focus:border-tarkov-accent focus:outline-none focus:ring-1 focus:ring-tarkov-accent
+           placeholder:text-tarkov-text-muted;
+}
+
+/* Button styles */
+.btn {
+    @apply px-4 py-2 rounded font-medium transition-colors cursor-pointer;
+}
+
+.btn-primary {
+    @apply bg-tarkov-accent text-tarkov-bg hover:bg-tarkov-accent-hover;
+}
+
+.btn-secondary {
+    @apply bg-tarkov-surface border border-tarkov-border text-tarkov-text hover:bg-tarkov-surface-light;
+}
+
+.btn-danger {
+    @apply bg-tarkov-danger text-white hover:bg-red-600;
+}
+
+/* Card/Panel styles */
+.panel {
+    @apply bg-tarkov-surface border border-tarkov-border rounded-lg p-4;
+}
+
+/* Label styles */
+label {
+    @apply block text-sm font-medium text-tarkov-text-muted mb-1;
+}
+
+/* Form group */
+.form-group {
+    @apply mb-4;
+}
