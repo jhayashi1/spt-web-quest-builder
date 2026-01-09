@@ -78,16 +78,24 @@ class QuestBuilder {
             }
         });
 
-        // Quest list selection
+        // Quest list selection and deletion
         document.getElementById('questList')?.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
-            if (target.classList.contains('quest-item')) {
-                this.loadQuest(target.dataset.id!);
+
+            // Handle delete button click
+            if (target.classList.contains('quest-delete-btn')) {
+                e.stopPropagation();
+                const questId = target.dataset.id!;
+                this.deleteQuest(questId);
+                return;
+            }
+
+            // Handle quest item click (select quest)
+            const questItem = target.closest('.quest-item') as HTMLElement;
+            if (questItem) {
+                this.loadQuest(questItem.dataset.id!);
             }
         });
-
-        // Delete quest button
-        document.getElementById('deleteQuestBtn')?.addEventListener('click', () => this.deleteCurrentQuest());
 
         // Add Reward button
         document.getElementById('addRewardBtn')?.addEventListener('click', () => this.openRewardBuilder());
@@ -111,14 +119,22 @@ class QuestBuilder {
         this.saveToStorage();
     }
 
-    private deleteCurrentQuest(): void {
-        if (!this.currentQuestId) return;
+    private deleteQuest(questId: string): void {
+        if (!questId) return;
 
-        if (confirm('Are you sure you want to delete this quest?')) {
-            delete this.quests[this.currentQuestId];
-            this.currentQuestId = null;
+        const quest = this.quests[questId];
+        if (!quest) return;
+
+        if (confirm(`Are you sure you want to delete "${quest.QuestName}"?`)) {
+            delete this.quests[questId];
+
+            // If we deleted the currently selected quest, clear the form
+            if (this.currentQuestId === questId) {
+                this.currentQuestId = null;
+                this.clearForm();
+            }
+
             this.updateQuestList();
-            this.clearForm();
             this.saveToStorage();
         }
     }
@@ -572,9 +588,12 @@ class QuestBuilder {
 
         Object.values(this.quests).forEach(quest => {
             const item = document.createElement('div');
-            item.className = `quest-item p-2 cursor-pointer hover:bg-tarkov-surface-light rounded ${quest._id === this.currentQuestId ? 'bg-tarkov-surface-light' : ''}`;
+            item.className = `quest-item group relative flex items-center p-2 cursor-pointer hover:bg-tarkov-surface-light rounded ${quest._id === this.currentQuestId ? 'bg-tarkov-surface-light' : ''}`;
             item.dataset.id = quest._id;
-            item.textContent = quest.QuestName;
+            item.innerHTML = `
+                <span class="truncate flex-1">${quest.QuestName}</span>
+                <button type="button" class="quest-delete-btn flex-shrink-0 w-6 h-6 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 text-tarkov-danger hover:text-red-400 hover:bg-tarkov-danger/20 rounded transition-all text-lg leading-none" data-id="${quest._id}">&times;</button>
+            `;
             list.appendChild(item);
         });
     }

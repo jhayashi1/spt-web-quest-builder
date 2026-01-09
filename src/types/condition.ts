@@ -4,7 +4,7 @@ export interface Counter {
     id: string;
 }
 
-/** Counter condition for kills */
+/** Counter condition for kills, exit status, exit name, etc. */
 export interface CounterCondition {
     bodyPart?: string[];
     conditionType: string;
@@ -14,9 +14,12 @@ export interface CounterCondition {
     enemyEquipmentExclusive?: string[];
     enemyEquipmentInclusive?: string[];
     enemyHealthEffects?: unknown[];
+    exitName?: string;
     id: string;
+    location?: string[];
     resetOnSessionEnd?: boolean;
     savageRole?: string[];
+    status?: string[];
     target?: string;
     weapon?: string[];
     weaponCaliber?: string[];
@@ -42,6 +45,7 @@ export interface QuestCondition {
     oneSessionOnly?: boolean;
     onlyFoundInRaid?: boolean;
     parentId?: string;
+    plantTime?: number;
     status?: number[];
     target?: string | string[];
     type?: string;

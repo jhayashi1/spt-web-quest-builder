@@ -6,6 +6,7 @@ export const LOCATIONS = [
     'factory4_night',
     'interchange',
     'laboratory',
+    'labyrinth',
     'lighthouse',
     'rezervbase', // Reserve
     'shoreline',

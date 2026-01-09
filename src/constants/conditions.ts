@@ -5,6 +5,7 @@ export const CONDITION_TYPES = [
     'HandoverItem', // Hand over items to trader
     'LeaveItemAtLocation', // Leave item at location
     'Level', // Player level requirement
+    'PlaceBeacon', // Place beacon at location
     'Quest', // Complete another quest
     'Skill', // Skill level requirement
     'TraderLoyalty', // Trader loyalty requirement
@@ -12,6 +13,28 @@ export const CONDITION_TYPES = [
 ] as const;
 
 export type ConditionType = typeof CONDITION_TYPES[number];
+
+/** Counter condition sub-types */
+export const COUNTER_CONDITION_TYPES = [
+    'Kills',
+    'VisitPlace',
+    'ExitStatus',
+    'ExitName',
+    'Location',
+] as const;
+
+export type CounterConditionType = typeof COUNTER_CONDITION_TYPES[number];
+
+/** Exit statuses for ExitStatus conditions */
+export const EXIT_STATUSES = [
+    'Survived',
+    'Runner',
+    'Killed',
+    'Left',
+    'MissingInAction',
+] as const;
+
+export type ExitStatus = typeof EXIT_STATUSES[number];
 
 /** Elimination targets */
 export const ELIMINATION_TARGETS = [

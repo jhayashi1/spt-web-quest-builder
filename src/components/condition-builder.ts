@@ -1,6 +1,6 @@
 import type {QuestCondition} from '../types/condition';
 
-import {BODY_PARTS, COMPARE_METHODS, CONDITION_TYPES, type ConditionType, ELIMINATION_TARGETS, QUEST_STATUSES} from '../constants/conditions';
+import {BODY_PARTS, COMPARE_METHODS, CONDITION_TYPES, type ConditionType, COUNTER_CONDITION_TYPES, ELIMINATION_TARGETS, EXIT_STATUSES, QUEST_STATUSES} from '../constants/conditions';
 import {LOCATIONS} from '../constants/locations';
 import {SKILLS} from '../constants/rewards';
 import {TRADERS} from '../constants/traders';
@@ -148,14 +148,85 @@ export class ConditionBuilder {
 
         switch (type) {
             case 'CounterCreator': {
-                const selectedWeapons = formData.get('weapon') as string;
-                const weaponIds = selectedWeapons ? selectedWeapons.split(',').filter(w => w.trim()) : [];
-                const bodyPartValue = formData.get('bodyPart') as string;
-                const targetValue = formData.get('target') as string;
-                condition = {
-                    ...baseCondition,
-                    counter: {
-                        conditions: [{
+                const counterConditionType = formData.get('counterConditionType') as string || 'Kills';
+                const counterId = generateId();
+
+                let counterConditions;
+
+                switch (counterConditionType) {
+                    case 'ExitName': {
+                        counterConditions = [{
+                            conditionType: 'ExitName',
+                            dynamicLocale: false,
+                            exitName     : formData.get('exitName') as string,
+                            id           : generateId(),
+                        }];
+                        condition = {
+                            ...baseCondition,
+                            counter       : {conditions: counterConditions, id: counterId},
+                            oneSessionOnly: false,
+                            type          : 'Completion',
+                            value         : parseInt(formData.get('value') as string) || 1,
+                        };
+                        break;
+                    }
+                    case 'ExitStatus': {
+                        const statuses = Array.from(formData.getAll('exitStatus')) as string[];
+                        counterConditions = [{
+                            conditionType: 'ExitStatus',
+                            dynamicLocale: false,
+                            id           : generateId(),
+                            status       : statuses.length > 0 ? statuses : ['Survived'],
+                        }];
+                        condition = {
+                            ...baseCondition,
+                            counter       : {conditions: counterConditions, id: counterId},
+                            oneSessionOnly: false,
+                            type          : 'Completion',
+                            value         : parseInt(formData.get('value') as string) || 1,
+                        };
+                        break;
+                    }
+                    case 'Location': {
+                        const locations = Array.from(formData.getAll('locations')) as string[];
+                        counterConditions = [{
+                            conditionType: 'Location',
+                            dynamicLocale: false,
+                            id           : generateId(),
+                            location     : locations.length > 0 ? locations : ['any'],
+                        }];
+                        condition = {
+                            ...baseCondition,
+                            counter       : {conditions: counterConditions, id: counterId},
+                            oneSessionOnly: false,
+                            type          : 'Completion',
+                            value         : parseInt(formData.get('value') as string) || 1,
+                        };
+                        break;
+                    }
+                    case 'VisitPlace': {
+                        counterConditions = [{
+                            conditionType: 'VisitPlace',
+                            dynamicLocale: false,
+                            id           : generateId(),
+                            target       : formData.get('zoneId') as string,
+                        }];
+                        condition = {
+                            ...baseCondition,
+                            counter       : {conditions: counterConditions, id: counterId},
+                            oneSessionOnly: false,
+                            type          : 'Exploration',
+                            value         : 1,
+                        };
+                        break;
+                    }
+                    case 'Kills':
+                    default: {
+                        const selectedWeapons = formData.get('weapon') as string;
+                        const weaponIds = selectedWeapons ? selectedWeapons.split(',').filter(w => w.trim()) : [];
+                        const bodyPartValue = formData.get('bodyPart') as string;
+                        const targetValue = formData.get('target') as string;
+                        counterConditions = [{
                             bodyPart               : bodyPartValue !== 'Any' ? [bodyPartValue] : undefined,
                             conditionType          : 'Kills',
                             daytime                : {from: 0, to: 0},
@@ -172,13 +243,17 @@ export class ConditionBuilder {
                             weaponCaliber          : [],
                             weaponModsExclusive    : [],
                             weaponModsInclusive    : [],
-                        }],
-                        id: generateId(),
-                    },
-                    oneSessionOnly: false,
-                    type          : 'Elimination',
-                    value         : parseInt(formData.get('value') as string) || 1,
-                };
+                        }];
+                        condition = {
+                            ...baseCondition,
+                            counter       : {conditions: counterConditions, id: counterId},
+                            oneSessionOnly: false,
+                            type          : 'Elimination',
+                            value         : parseInt(formData.get('value') as string) || 1,
+                        };
+                        break;
+                    }
+                }
                 break;
             }
 
@@ -216,6 +291,18 @@ export class ConditionBuilder {
                     value        : parseInt(formData.get('value') as string) || 1,
                 };
                 break;
+
+            case 'PlaceBeacon':
+                condition = {
+                    ...baseCondition,
+                    onlyFoundInRaid: formData.get('onlyFoundInRaid') === 'on',
+                    plantTime      : parseInt(formData.get('plantTime') as string) || 0,
+                    target         : [formData.get('target') as string],
+                    value          : parseInt(formData.get('value') as string) || 1,
+                    zoneId         : formData.get('zoneId') as string,
+                };
+                break;
+
             case 'Quest':
                 condition = {
                     ...baseCondition,
@@ -264,14 +351,46 @@ export class ConditionBuilder {
     private populateFieldsWithCondition(condition: QuestCondition): void {
         switch (condition.conditionType) {
             case 'CounterCreator': {
-                const kills = condition.counter?.conditions?.[0];
-                if (kills) {
-                    this.setFieldValue('target', kills.target || kills.savageRole?.[0] || 'Any');
-                    this.setFieldValue('bodyPart', kills.bodyPart?.[0] || 'Any');
-                    this.setFieldValue('location', condition.counter?.conditions?.[0]?.target || 'any');
-                    // Set weapon if available
-                    if (kills.weapon && kills.weapon.length > 0) {
-                        this.setFieldValue('weapon', kills.weapon[0]);
+                const subCondition = condition.counter?.conditions?.[0];
+                if (subCondition) {
+                    const subType = subCondition.conditionType || 'Kills';
+                    this.setFieldValue('counterConditionType', subType);
+
+                    // Trigger field update for the sub-condition type
+                    this.updateCounterSubFields(subType);
+
+                    switch (subType) {
+                        case 'ExitName':
+                            this.setFieldValue('exitName', subCondition.exitName || '');
+                            break;
+                        case 'ExitStatus':
+                            // Handle multi-select for statuses
+                            if (subCondition.status) {
+                                subCondition.status.forEach(s => {
+                                    const checkbox = this.dialog.querySelector(`input[name="exitStatus"][value="${s}"]`) as HTMLInputElement;
+                                    if (checkbox) checkbox.checked = true;
+                                });
+                            }
+                            break;
+                        case 'Kills':
+                            this.setFieldValue('target', subCondition.target || subCondition.savageRole?.[0] || 'Any');
+                            this.setFieldValue('bodyPart', subCondition.bodyPart?.[0] || 'Any');
+                            if (subCondition.weapon && subCondition.weapon.length > 0) {
+                                this.setFieldValue('weapon', subCondition.weapon[0]);
+                            }
+                            break;
+                        case 'Location':
+                            // Handle multi-select for locations
+                            if (subCondition.location) {
+                                subCondition.location.forEach(loc => {
+                                    const checkbox = this.dialog.querySelector(`input[name="locations"][value="${loc}"]`) as HTMLInputElement;
+                                    if (checkbox) checkbox.checked = true;
+                                });
+                            }
+                            break;
+                        case 'VisitPlace':
+                            this.setFieldValue('zoneId', subCondition.target || '');
+                            break;
                     }
                 }
                 this.setFieldValue('value', String(condition.value || 1));
@@ -300,6 +419,16 @@ export class ConditionBuilder {
                 this.setFieldValue('compareMethod', condition.compareMethod || '>=');
                 this.setFieldValue('value', String(condition.value || 1));
                 break;
+
+            case 'PlaceBeacon': {
+                const target = Array.isArray(condition.target) ? condition.target[0] : condition.target;
+                this.setFieldValue('target', target || '');
+                this.setFieldValue('zoneId', condition.zoneId || '');
+                this.setFieldValue('plantTime', String(condition.plantTime || 0));
+                this.setFieldValue('value', String(condition.value || 1));
+                this.setCheckboxValue('onlyFoundInRaid', condition.onlyFoundInRaid || false);
+                break;
+            }
 
             case 'Quest':
                 this.setFieldValue('target', condition.target as string || '');
@@ -344,37 +473,48 @@ export class ConditionBuilder {
         if (field) field.value = value;
     }
 
-    private updateFields(type: ConditionType): void {
-        const container = this.dialog.querySelector('#conditionFields')!;
+    private updateCounterSubFields(subType: string): void {
+        const subContainer = this.dialog.querySelector('#counterSubFields');
+        if (!subContainer) return;
 
-        switch (type) {
-            case 'CounterCreator': {
-                // Build weapon options with optgroups
-                const weaponOptionsHtml = WEAPON_CATEGORIES.map(cat => `
-                    <optgroup label="${cat.category}">
-                        ${cat.weapons.map(w => `<option value="${w.id}">${w.name}</option>`).join('')}
-                    </optgroup>
-                `).join('');
+        const weaponOptionsHtml = WEAPON_CATEGORIES.map(cat => `
+            <optgroup label="${cat.category}">
+                ${cat.weapons.map(w => `<option value="${w.id}">${w.name}</option>`).join('')}
+            </optgroup>
+        `).join('');
 
-                container.innerHTML = `
+        switch (subType) {
+            case 'ExitName':
+                subContainer.innerHTML = `
+                    <div class="form-group">
+                        <label for="exitName">Exit Name</label>
+                        <input type="text" id="exitName" name="exitName" class="w-full" placeholder="Exact extract point name" />
+                        <p class="text-xs text-tarkov-text-muted mt-1">The exact name of the extraction point</p>
+                    </div>
+                `;
+                break;
+            case 'ExitStatus':
+                subContainer.innerHTML = `
+                    <div class="form-group">
+                        <label>Exit Status (select one or more)</label>
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            ${EXIT_STATUSES.map(s => `
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" name="exitStatus" value="${s}" ${s === 'Survived' ? 'checked' : ''} class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                                    <span>${s}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                break;
+            case 'Kills':
+                subContainer.innerHTML = `
                     <div class="grid grid-cols-2 gap-4">
                         <div class="form-group">
                             <label for="elimTarget">Target</label>
                             <select id="elimTarget" name="target" class="w-full">
                                 ${ELIMINATION_TARGETS.map(t => `<option value="${t}">${t}</option>`).join('')}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="elimValue">Kill Count</label>
-                            <input type="number" id="elimValue" name="value" class="w-full" min="1" value="1" />
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label for="elimLocation">Location</label>
-                            <select id="elimLocation" name="location" class="w-full">
-                                <option value="any">Any</option>
-                                ${LOCATIONS.filter(l => l !== 'any').map(l => `<option value="${l}">${l}</option>`).join('')}
                             </select>
                         </div>
                         <div class="form-group">
@@ -390,9 +530,64 @@ export class ConditionBuilder {
                             <option value="">Any Weapon</option>
                             ${weaponOptionsHtml}
                         </select>
-                        <p class="text-xs text-tarkov-text-muted mt-1">Select a specific weapon for the elimination requirement</p>
                     </div>
                 `;
+                break;
+            case 'Location':
+                subContainer.innerHTML = `
+                    <div class="form-group">
+                        <label>Locations (select one or more)</label>
+                        <div class="grid grid-cols-2 gap-2 mt-2 max-h-40 overflow-y-auto">
+                            ${LOCATIONS.filter(l => l !== 'any').map(l => `
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" name="locations" value="${l}" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                                    <span>${l}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                break;
+            case 'VisitPlace':
+                subContainer.innerHTML = `
+                    <div class="form-group">
+                        <label for="zoneId">Zone ID</label>
+                        <input type="text" id="zoneId" name="zoneId" class="w-full" placeholder="Zone identifier to visit" />
+                    </div>
+                `;
+                break;
+            default:
+                subContainer.innerHTML = '';
+        }
+    }
+
+    private updateFields(type: ConditionType): void {
+        const container = this.dialog.querySelector('#conditionFields')!;
+
+        switch (type) {
+            case 'CounterCreator': {
+                container.innerHTML = `
+                    <div class="form-group mb-4">
+                        <label for="counterConditionType">Sub-Condition Type</label>
+                        <select id="counterConditionType" name="counterConditionType" class="w-full">
+                            ${COUNTER_CONDITION_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div id="counterSubFields"></div>
+                    <div class="form-group mt-4">
+                        <label for="elimValue">Count/Value</label>
+                        <input type="number" id="elimValue" name="value" class="w-full" min="1" value="1" />
+                    </div>
+                `;
+
+                // Bind change event for sub-type
+                const subTypeSelect = container.querySelector('#counterConditionType') as HTMLSelectElement;
+                subTypeSelect?.addEventListener('change', () => {
+                    this.updateCounterSubFields(subTypeSelect.value);
+                });
+
+                // Initialize with Kills fields
+                this.updateCounterSubFields('Kills');
                 break;
             }
 
@@ -460,6 +655,38 @@ export class ConditionBuilder {
                     </div>
                 `;
                 break;
+
+            case 'PlaceBeacon':
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="beaconItem">Item Template ID</label>
+                            <input type="text" id="beaconItem" name="target" class="w-full" placeholder="Beacon/item to place" />
+                        </div>
+                        <div class="form-group">
+                            <label for="beaconZone">Zone ID</label>
+                            <input type="text" id="beaconZone" name="zoneId" class="w-full" placeholder="Target zone" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="plantTime">Plant Time (seconds)</label>
+                            <input type="number" id="plantTime" name="plantTime" class="w-full" min="0" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label for="beaconValue">Quantity</label>
+                            <input type="number" id="beaconValue" name="value" class="w-full" min="1" value="1" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="onlyFoundInRaid" checked class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                            <span>Found in Raid Only</span>
+                        </label>
+                    </div>
+                `;
+                break;
+
             case 'Quest':
                 container.innerHTML = `
                     <div class="grid grid-cols-2 gap-4">
