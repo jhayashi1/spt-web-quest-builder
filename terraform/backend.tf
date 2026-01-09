@@ -4,6 +4,6 @@ terraform {
         acl = "bucket-owner-full-control"
         encrypt = true
         region = "us-east-1"
-        key = ""
+        key = "spt-web-quest-builder"
     }
 }
