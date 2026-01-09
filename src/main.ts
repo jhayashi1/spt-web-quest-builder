@@ -15,6 +15,7 @@ import {createDefaultMessages, downloadJson, generateId, readJsonFile} from './u
 
 /** Application State */
 class QuestBuilder {
+    private static readonly STORAGE_KEY = 'spt-quest-builder-quests';
     private assortBuilder: AssortBuilder | null = null;
     private conditionBuilder: ConditionBuilder;
     private currentQuestId: null | string = null;
@@ -27,6 +28,7 @@ class QuestBuilder {
         this.initializeUI();
         this.initializeTabs();
         this.bindEvents();
+        this.loadFromStorage();
     }
 
     private bindEvents(): void {
@@ -106,6 +108,7 @@ class QuestBuilder {
         const quest = this.quests[this.currentQuestId];
         quest.conditions[category] = quest.conditions[category].filter(c => c.id !== conditionId);
         this.updateConditionsList();
+        this.saveToStorage();
     }
 
     private deleteCurrentQuest(): void {
@@ -116,6 +119,7 @@ class QuestBuilder {
             this.currentQuestId = null;
             this.updateQuestList();
             this.clearForm();
+            this.saveToStorage();
         }
     }
 
@@ -124,6 +128,7 @@ class QuestBuilder {
         const quest = this.quests[this.currentQuestId];
         quest.rewards[timing] = quest.rewards[timing].filter(r => r.id !== rewardId);
         this.updateRewardsList();
+        this.saveToStorage();
     }
 
     private editCondition(conditionId: string, category: ConditionCategory): void {
@@ -145,6 +150,7 @@ class QuestBuilder {
                 }
             }
             this.updateConditionsList();
+            this.saveToStorage();
             this.showToast(`Updated ${updatedCondition.conditionType} condition`);
         }, condition, category);
     }
@@ -168,6 +174,7 @@ class QuestBuilder {
                 }
             }
             this.updateRewardsList();
+            this.saveToStorage();
             this.showToast(`Updated ${updatedReward.type} reward`);
         }, reward, timing);
     }
@@ -231,6 +238,7 @@ class QuestBuilder {
             }
 
             this.updateQuestList();
+            this.saveToStorage();
             this.showToast(`Imported ${count} quest(s)`);
         } catch (err) {
             alert(`Failed to import: ${err}`);
@@ -397,6 +405,7 @@ class QuestBuilder {
         this.loadQuestToForm(quest);
         this.updateRewardsList();
         this.updateConditionsList();
+        this.saveToStorage();
     }
 
     private openConditionBuilder(): void {
@@ -409,6 +418,7 @@ class QuestBuilder {
             const quest = this.quests[this.currentQuestId!];
             quest.conditions[category].push(condition);
             this.updateConditionsList();
+            this.saveToStorage();
             this.showToast(`Added ${condition.conditionType} condition`);
         });
     }
@@ -423,6 +433,7 @@ class QuestBuilder {
             const quest = this.quests[this.currentQuestId!];
             quest.rewards[timing].push(reward);
             this.updateRewardsList();
+            this.saveToStorage();
             this.showToast(`Added ${reward.type} reward`);
         });
     }
@@ -464,7 +475,34 @@ class QuestBuilder {
 
         this.quests[this.currentQuestId] = quest;
         this.updateQuestList();
+        this.saveToStorage();
         this.showToast('Quest saved!');
+    }
+
+    private loadFromStorage(): void {
+        try {
+            const stored = localStorage.getItem(QuestBuilder.STORAGE_KEY);
+            if (stored) {
+                this.quests = JSON.parse(stored);
+                this.updateQuestList();
+                
+                // Load the first quest if available
+                const firstQuestId = Object.keys(this.quests)[0];
+                if (firstQuestId) {
+                    this.loadQuest(firstQuestId);
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load quests from storage:', err);
+        }
+    }
+
+    private saveToStorage(): void {
+        try {
+            localStorage.setItem(QuestBuilder.STORAGE_KEY, JSON.stringify(this.quests));
+        } catch (err) {
+            console.error('Failed to save quests to storage:', err);
+        }
     }
 
     private showToast(message: string): void {
