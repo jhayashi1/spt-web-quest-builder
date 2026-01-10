@@ -5,6 +5,8 @@ export interface AssortItem {
     parentId?: string;
     slotId?: string;
     upd?: {
+        BuyRestrictionCurrent?: number;
+        BuyRestrictionMax?: number;
         StackObjectsCount?: number;
         UnlimitedCount?: boolean;
     };
@@ -23,6 +25,9 @@ export interface BarterSchemeItem {
 export interface LoyalLevel {
     loyaltyLevel: number;
 }
+
+/** Quest lock condition type */
+export type QuestConditionType = 'fail' | 'started' | 'success';
 
 /** Quest lock for an item */
 export interface QuestLock {

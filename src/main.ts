@@ -5,6 +5,7 @@ import type {Reward} from './types/reward';
 import {AssortBuilder} from './components/assort-builder';
 import {ConditionBuilder, type ConditionCategory} from './components/condition-builder';
 import {RewardBuilder} from './components/reward-builder';
+import {WeaponBuilder} from './components/weapon-builder';
 import {FACTIONS} from './constants/factions';
 import {LOCATIONS} from './constants/locations';
 import {QUEST_TYPES} from './constants/quest-types';
@@ -19,8 +20,10 @@ class QuestBuilder {
     private assortBuilder: AssortBuilder | null = null;
     private conditionBuilder: ConditionBuilder;
     private currentQuestId: null | string = null;
+    private currentTab: 'assort' | 'quests' | 'weapon' = 'quests';
     private quests: QuestFile = {};
     private rewardBuilder: RewardBuilder;
+    private weaponBuilder: null | WeaponBuilder = null;
 
     constructor() {
         this.rewardBuilder = new RewardBuilder();
@@ -44,6 +47,8 @@ class QuestBuilder {
 
         exportBtn?.addEventListener('click', (e) => {
             e.stopPropagation();
+            // Update menu visibility based on current tab
+            this.updateExportMenu();
             exportMenu?.classList.toggle('hidden');
         });
 
@@ -52,28 +57,49 @@ class QuestBuilder {
             exportMenu?.classList.add('hidden');
         });
 
-        // Export all quests
+        // Quest exports
         document.getElementById('exportAllBtn')?.addEventListener('click', () => {
             this.exportQuests();
             exportMenu?.classList.add('hidden');
         });
 
-        // Export current quest
         document.getElementById('exportCurrentBtn')?.addEventListener('click', () => {
             this.exportCurrentQuest();
             exportMenu?.classList.add('hidden');
         });
 
-        // Import button
-        document.getElementById('importBtn')?.addEventListener('click', () => {
-            document.getElementById('importFile')?.click();
+        // Assort exports
+        document.getElementById('exportAllAssortBtn')?.addEventListener('click', () => {
+            this.assortBuilder?.exportAssort();
+            exportMenu?.classList.add('hidden');
         });
 
-        // File input change
+        document.getElementById('exportCurrentAssortBtn')?.addEventListener('click', () => {
+            this.assortBuilder?.exportCurrentItem();
+            exportMenu?.classList.add('hidden');
+        });
+
+        // Weapon exports
+        document.getElementById('exportAllWeaponBtn')?.addEventListener('click', () => {
+            this.weaponBuilder?.exportPresets();
+            exportMenu?.classList.add('hidden');
+        });
+
+        document.getElementById('exportCurrentWeaponBtn')?.addEventListener('click', () => {
+            this.weaponBuilder?.exportCurrentPreset();
+            exportMenu?.classList.add('hidden');
+        });
+
+        // Import button - context-aware
+        document.getElementById('importBtn')?.addEventListener('click', () => {
+            this.handleImport();
+        });
+
+        // File input change - context-aware
         document.getElementById('importFile')?.addEventListener('change', (e) => {
             const input = e.target as HTMLInputElement;
             if (input.files?.[0]) {
-                this.importQuests(input.files[0]);
+                this.handleImportFile(input.files[0]);
                 input.value = ''; // Reset for re-import
             }
         });
@@ -243,6 +269,40 @@ class QuestBuilder {
         }
     }
 
+    private handleExportAll(): void {
+        if (this.currentTab === 'assort' && this.assortBuilder) {
+            this.assortBuilder.exportAssort();
+        } else if (this.currentTab === 'weapon' && this.weaponBuilder) {
+            this.weaponBuilder.exportPresets();
+        } else {
+            this.exportQuests();
+        }
+    }
+
+    private handleExportCurrent(): void {
+        if (this.currentTab === 'quests') {
+            this.exportCurrentQuest();
+        } else if (this.currentTab === 'assort' && this.assortBuilder) {
+            this.assortBuilder.exportCurrentItem();
+        } else if (this.currentTab === 'weapon' && this.weaponBuilder) {
+            this.weaponBuilder.exportCurrentPreset();
+        }
+    }
+
+    private handleImport(): void {
+        document.getElementById('importFile')?.click();
+    }
+
+    private handleImportFile(file: File): void {
+        if (this.currentTab === 'assort' && this.assortBuilder) {
+            this.assortBuilder.importAssort(file);
+        } else if (this.currentTab === 'weapon' && this.weaponBuilder) {
+            this.weaponBuilder.importPresets(file);
+        } else {
+            this.importQuests(file);
+        }
+    }
+
     private async importQuests(file: File): Promise<void> {
         try {
             const imported = await readJsonFile<QuestFile>(file);
@@ -264,33 +324,55 @@ class QuestBuilder {
     private initializeTabs(): void {
         const tabQuests = document.getElementById('tabQuests');
         const tabAssort = document.getElementById('tabAssort');
+        const tabWeapon = document.getElementById('tabWeapon');
         const questTab = document.getElementById('questBuilderTab');
         const assortTab = document.getElementById('assortBuilderTab');
-        const questActions = document.getElementById('questActions');
+        const weaponTab = document.getElementById('weaponBuilderTab');
 
-        console.log('Initializing tabs:', {assortTab, questTab, tabAssort, tabQuests});
+        console.log('Initializing tabs:', {assortTab, questTab, tabAssort, tabQuests, tabWeapon, weaponTab});
 
         tabQuests?.addEventListener('click', () => {
             console.log('Quest tab clicked');
             tabQuests.classList.add('active');
             tabAssort?.classList.remove('active');
+            tabWeapon?.classList.remove('active');
             questTab?.classList.remove('hidden');
             assortTab?.classList.add('hidden');
-            questActions?.classList.remove('hidden');
+            weaponTab?.classList.add('hidden');
+            this.updateHeaderButtons('quests');
         });
 
         tabAssort?.addEventListener('click', () => {
             console.log('Assort tab clicked');
             tabAssort.classList.add('active');
             tabQuests?.classList.remove('active');
+            tabWeapon?.classList.remove('active');
             assortTab?.classList.remove('hidden');
             questTab?.classList.add('hidden');
-            questActions?.classList.add('hidden');
+            weaponTab?.classList.add('hidden');
+            this.updateHeaderButtons('assort');
 
             // Lazy-initialize the assort builder
             if (!this.assortBuilder) {
                 console.log('Creating AssortBuilder');
                 this.assortBuilder = new AssortBuilder('assortBuilderContainer');
+            }
+        });
+
+        tabWeapon?.addEventListener('click', () => {
+            console.log('Weapon tab clicked');
+            tabWeapon.classList.add('active');
+            tabQuests?.classList.remove('active');
+            tabAssort?.classList.remove('active');
+            weaponTab?.classList.remove('hidden');
+            questTab?.classList.add('hidden');
+            assortTab?.classList.add('hidden');
+            this.updateHeaderButtons('weapon');
+
+            // Lazy-initialize the weapon builder
+            if (!this.weaponBuilder) {
+                console.log('Creating WeaponBuilder');
+                this.weaponBuilder = new WeaponBuilder('weaponBuilderContainer');
             }
         });
     }
@@ -557,14 +639,14 @@ class QuestBuilder {
         for (const category of ['AvailableForStart', 'AvailableForFinish', 'Fail'] as const) {
             quest.conditions[category].forEach(condition => {
                 const item = document.createElement('div');
-                item.className = 'group flex items-center justify-between p-2 bg-tarkov-surface rounded border border-tarkov-border hover:border-tarkov-accent cursor-pointer transition-colors';
+                item.className = 'card-item group cursor-pointer';
                 const categoryLabel = category === 'AvailableForStart' ? 'Start' : category === 'AvailableForFinish' ? 'Finish' : 'Fail';
                 item.innerHTML = `
                     <div class="flex-1 edit-condition" data-id="${condition.id}" data-category="${category}">
                         <span class="text-tarkov-accent">[${categoryLabel}]</span>
                         <span class="text-tarkov-text">${condition.conditionType}</span>
                     </div>
-                    <button type="button" class="delete-condition flex-shrink-0 w-6 h-6 flex items-center justify-center cursor-pointer sm:opacity-0 sm:group-hover:opacity-100 text-tarkov-danger hover:text-red-400 hover:bg-tarkov-danger/20 rounded transition-all text-lg leading-none" data-id="${condition.id}" data-category="${category}">&times;</button>
+                    <button type="button" class="delete-condition icon-btn-delete sm:opacity-0 sm:group-hover:opacity-100" data-id="${condition.id}" data-category="${category}">&times;</button>
                 `;
                 list.appendChild(item);
             });
@@ -592,17 +674,56 @@ class QuestBuilder {
         });
     }
 
+    private updateExportMenu(): void {
+        const questOptions = document.getElementById('exportQuestOptions');
+        const assortOptions = document.getElementById('exportAssortOptions');
+        const weaponOptions = document.getElementById('exportWeaponOptions');
+
+        // Hide all options first
+        questOptions?.classList.add('hidden');
+        assortOptions?.classList.add('hidden');
+        weaponOptions?.classList.add('hidden');
+
+        // Show options based on current tab
+        if (this.currentTab === 'quests') {
+            questOptions?.classList.remove('hidden');
+        } else if (this.currentTab === 'assort') {
+            assortOptions?.classList.remove('hidden');
+        } else if (this.currentTab === 'weapon') {
+            weaponOptions?.classList.remove('hidden');
+        }
+    }
+
+    private updateHeaderButtons(tab: 'assort' | 'quests' | 'weapon'): void {
+        this.currentTab = tab;
+        const exportBtn = document.getElementById('exportBtn');
+        const exportMenu = document.getElementById('exportMenu');
+        const dropdownArrow = exportBtn?.querySelector('svg');
+
+        // Hide dropdown menu when not on quests tab
+        exportMenu?.classList.add('hidden');
+
+        // Show/hide dropdown arrow based on tab
+        if (dropdownArrow) {
+            if (tab === 'quests') {
+                dropdownArrow.classList.remove('hidden');
+            } else {
+                dropdownArrow.classList.add('hidden');
+            }
+        }
+    }
+
     private updateQuestList(): void {
         const list = document.getElementById('questList')!;
         list.innerHTML = '';
 
         Object.values(this.quests).forEach(quest => {
             const item = document.createElement('div');
-            item.className = `quest-item group relative flex items-center p-2 cursor-pointer hover:bg-tarkov-surface-light rounded ${quest._id === this.currentQuestId ? 'bg-tarkov-surface-light' : ''}`;
+            item.className = `quest-item list-item group ${quest._id === this.currentQuestId ? 'bg-tarkov-surface-light' : ''}`;
             item.dataset.id = quest._id;
             item.innerHTML = `
                 <span class="truncate flex-1">${quest.QuestName}</span>
-                <button type="button" class="quest-delete-btn flex-shrink-0 w-6 h-6 flex items-center justify-center cursor-pointer sm:opacity-0 sm:group-hover:opacity-100 text-tarkov-danger hover:text-red-400 hover:bg-tarkov-danger/20 rounded transition-all text-lg leading-none" data-id="${quest._id}">&times;</button>
+                <button type="button" class="quest-delete-btn icon-btn-delete sm:opacity-0 sm:group-hover:opacity-100" data-id="${quest._id}">&times;</button>
             `;
             list.appendChild(item);
         });
@@ -622,14 +743,14 @@ class QuestBuilder {
         for (const timing of ['Success', 'Started', 'Fail'] as const) {
             quest.rewards[timing].forEach(reward => {
                 const item = document.createElement('div');
-                item.className = 'group flex items-center justify-between p-2 bg-tarkov-surface rounded border border-tarkov-border hover:border-tarkov-accent cursor-pointer transition-colors';
+                item.className = 'card-item group cursor-pointer';
                 item.innerHTML = `
                     <div class="flex-1 edit-reward" data-id="${reward.id}" data-timing="${timing}">
                         <span class="text-tarkov-accent">[${timing}]</span>
                         <span class="text-tarkov-text">${reward.type}</span>
                         ${this.getRewardValueDisplay(reward)}
                     </div>
-                    <button type="button" class="delete-reward flex-shrink-0 w-6 h-6 flex items-center justify-center cursor-pointer sm:opacity-0 sm:group-hover:opacity-100 text-tarkov-danger hover:text-red-400 hover:bg-tarkov-danger/20 rounded transition-all text-lg leading-none" data-id="${reward.id}" data-timing="${timing}">&times;</button>
+                    <button type="button" class="delete-reward icon-btn-delete sm:opacity-0 sm:group-hover:opacity-100" data-id="${reward.id}" data-timing="${timing}">&times;</button>
                 `;
                 list.appendChild(item);
             });

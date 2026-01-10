@@ -8,8 +8,8 @@ import {type QuestRewards} from './reward';
 /** Main Quest interface */
 export interface Quest {
     _id: string;
-    acceptPlayerMessage: string;
     acceptanceAndFinishingSource?: string;
+    acceptPlayerMessage: string;
     arenaLocations?: string[];
     canShowNotificationsInGame: boolean;
     changeQuestMessageText: string;

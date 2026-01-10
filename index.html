@@ -22,8 +22,9 @@
                     <nav class="flex gap-1 bg-tarkov-bg rounded-lg p-1">
                         <button id="tabQuests" class="tab-btn active px-3 sm:px-4 py-1.5 sm:py-2 rounded text-xs sm:text-sm font-medium transition-colors">Quests</button>
                         <button id="tabAssort" class="tab-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded text-xs sm:text-sm font-medium transition-colors">Assort</button>
+                        <button id="tabWeapon" class="tab-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded text-xs sm:text-sm font-medium transition-colors">Weapon Builder</button>
                     </nav>
-                    <div class="flex gap-2 ml-auto sm:ml-0" id="questActions">
+                    <div class="flex gap-2 ml-auto sm:ml-0">
                         <button id="importBtn" class="btn btn-secondary text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2">Import</button>
                         <input type="file" id="importFile" accept=".json" class="hidden" />
                         <div class="relative" id="exportDropdown">
@@ -32,8 +33,21 @@
                                 <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
                             <div id="exportMenu" class="hidden absolute right-0 mt-1 w-48 bg-tarkov-surface border border-tarkov-border rounded-lg shadow-lg z-50">
-                                <button id="exportAllBtn" class="w-full text-left px-4 py-2 hover:bg-tarkov-surface-light rounded-t-lg transition-colors text-sm">Export All Quests</button>
-                                <button id="exportCurrentBtn" class="w-full text-left px-4 py-2 hover:bg-tarkov-surface-light rounded-b-lg transition-colors text-sm">Export Current Quest</button>
+                                <!-- Quest Export Options -->
+                                <div id="exportQuestOptions">
+                                    <button id="exportAllBtn" class="w-full text-left px-4 py-2 hover:bg-tarkov-surface-light rounded-t-lg transition-colors text-sm">Export All Quests</button>
+                                    <button id="exportCurrentBtn" class="w-full text-left px-4 py-2 hover:bg-tarkov-surface-light rounded-b-lg transition-colors text-sm">Export Current Quest</button>
+                                </div>
+                                <!-- Assort Export Options -->
+                                <div id="exportAssortOptions" class="hidden">
+                                    <button id="exportAllAssortBtn" class="w-full text-left px-4 py-2 hover:bg-tarkov-surface-light rounded-t-lg transition-colors text-sm">Export All Assort Items</button>
+                                    <button id="exportCurrentAssortBtn" class="w-full text-left px-4 py-2 hover:bg-tarkov-surface-light rounded-b-lg transition-colors text-sm">Export Current Item</button>
+                                </div>
+                                <!-- Weapon Export Options -->
+                                <div id="exportWeaponOptions" class="hidden">
+                                    <button id="exportAllWeaponBtn" class="w-full text-left px-4 py-2 hover:bg-tarkov-surface-light rounded-t-lg transition-colors text-sm">Export All Presets</button>
+                                    <button id="exportCurrentWeaponBtn" class="w-full text-left px-4 py-2 hover:bg-tarkov-surface-light rounded-b-lg transition-colors text-sm">Export Current Preset</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -208,6 +222,11 @@
             <!-- Assort Builder Tab -->
             <div id="assortBuilderTab" class="tab-content hidden">
                 <div id="assortBuilderContainer"></div>
+            </div>
+
+            <!-- Weapon Builder Tab -->
+            <div id="weaponBuilderTab" class="tab-content hidden">
+                <div id="weaponBuilderContainer"></div>
             </div>
         </main>
 

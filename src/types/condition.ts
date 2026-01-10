@@ -4,13 +4,6 @@ export interface Counter {
     id: string;
 }
 
-/** Visibility condition for hiding tasks until prerequisites are met */
-export interface VisibilityCondition {
-    conditionType: 'CompleteCondition';
-    id: string;
-    target: string; // ID of the condition that must be completed
-}
-
 /** Counter condition for kills, exit status, exit name, etc. */
 export interface CounterCondition {
     bodyPart?: string[];
@@ -72,4 +65,11 @@ export interface QuestConditions {
     AvailableForFinish: QuestCondition[];
     AvailableForStart: QuestCondition[];
     Fail: QuestCondition[];
+}
+
+/** Visibility condition for hiding tasks until prerequisites are met */
+export interface VisibilityCondition {
+    conditionType: 'CompleteCondition';
+    id: string;
+    target: string; // ID of the condition that must be completed
 }

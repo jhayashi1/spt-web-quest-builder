@@ -31,6 +31,19 @@ textarea {
            placeholder:text-tarkov-text-muted;
 }
 
+/* Disabled input styles */
+input:disabled,
+select:disabled,
+textarea:disabled {
+    @apply bg-tarkov-bg opacity-50 text-tarkov-text-muted;
+}
+
+/* Disabled button styles */
+button:disabled,
+.btn:disabled {
+    @apply opacity-50 pointer-events-none;
+}
+
 /* Button styles */
 .btn {
     @apply px-3 sm:px-4 py-1.5 sm:py-2 rounded font-medium transition-colors cursor-pointer text-sm sm:text-base;
@@ -83,4 +96,128 @@ dialog::backdrop {
 
 .tab-content.hidden {
     display: none;
+}
+/* ========================================
+   Reusable Component Classes (DRY)
+   ======================================== */
+
+/* List item container - used in quest list, presets list, assort list */
+.list-item {
+    @apply relative flex items-center p-2 cursor-pointer rounded transition-colors;
+}
+
+.list-item:hover {
+    @apply bg-tarkov-surface-light;
+}
+
+.list-item.selected {
+    @apply bg-tarkov-accent text-tarkov-bg;
+}
+
+.list-item.selected:hover {
+    @apply bg-tarkov-accent;
+}
+
+/* Card item - for items displayed in card format with details */
+.card-item {
+    @apply flex items-center justify-between p-3 bg-tarkov-surface rounded border border-tarkov-border transition-colors;
+}
+
+.card-item:hover {
+    @apply border-tarkov-accent;
+}
+
+/* Icon button base - small clickable icon buttons */
+.icon-btn {
+    @apply flex-shrink-0 w-6 h-6 flex items-center justify-center rounded transition-all text-lg leading-none cursor-pointer;
+}
+
+/* Delete button - consistent delete/remove styling */
+.icon-btn-delete {
+    @apply flex-shrink-0 w-6 h-6 flex items-center justify-center rounded transition-all text-lg leading-none cursor-pointer text-tarkov-danger hover:text-red-400 hover:bg-tarkov-danger/20;
+}
+
+/* Edit link/button styling */
+.action-link {
+    @apply text-tarkov-accent hover:text-tarkov-accent-hover cursor-pointer transition-colors;
+}
+
+.action-link-danger {
+    @apply text-tarkov-danger hover:text-red-400 cursor-pointer transition-colors;
+}
+
+/* Inner panel/section styling */
+.inner-panel {
+    @apply bg-tarkov-bg border border-tarkov-border rounded-lg p-3 sm:p-4;
+}
+
+/* Section header within panels */
+.section-header {
+    @apply font-semibold mb-3 sm:mb-4 text-sm sm:text-base;
+}
+
+/* Muted info text */
+.text-muted {
+    @apply text-xs text-tarkov-text-muted mt-1;
+}
+
+/* Badge/tag styles */
+.badge {
+    @apply text-xs ml-2;
+}
+
+.badge-accent {
+    @apply text-xs ml-2 text-tarkov-accent;
+}
+
+.badge-muted {
+    @apply text-xs ml-2 text-tarkov-text-muted;
+}
+
+.badge-warning {
+    @apply text-xs ml-2 text-yellow-500;
+}
+
+.badge-info {
+    @apply text-xs ml-2 text-blue-400;
+}
+
+.badge-orange {
+    @apply text-xs ml-2 text-orange-400;
+}
+
+/* Collapsible section container */
+.collapsible-section {
+    @apply bg-tarkov-surface border border-tarkov-border rounded-lg p-3 mb-4;
+}
+
+/* Table styles */
+.data-table {
+    @apply w-full text-sm;
+}
+
+.data-table th {
+    @apply text-left py-2 px-2 text-tarkov-text-muted font-medium border-b border-tarkov-border;
+}
+
+.data-table td {
+    @apply py-2 px-2;
+}
+
+.data-table tr {
+    @apply border-b border-tarkov-border/50 transition-colors;
+}
+
+.data-table tr:hover {
+    @apply bg-tarkov-surface;
+}
+
+/* Scrollable list container */
+.scrollable-list {
+    @apply space-y-1 max-h-[60vh] overflow-y-auto;
+}
+
+/* Actions container (for edit/delete buttons) */
+.actions {
+    @apply flex gap-2 items-center;
 }
