@@ -7,8 +7,6 @@ A modern web-based tool for building quests for [SPT (Single Player Tarkov)](htt
 - **Quest Builder** - Create and configure custom quests with various types and parameters
 - **Condition Builder** - Set up quest completion conditions (kill targets, find items, visit locations, etc.)
 - **Reward Builder** - Configure quest rewards including items, experience, trader reputation, and more
-- **Web-Based** - No installation required, runs directly in your browser
-- **Modern Stack** - Built with TypeScript, Vite, and Tailwind CSS
 
 ## Installation
 
@@ -36,13 +34,11 @@ A modern web-based tool for building quests for [SPT (Single Player Tarkov)](htt
 
 4. Open your browser and navigate to `http://localhost:8080`
 
-### Building for Production
+### Building
 
 ```bash
 bun run build
 ```
-
-The built files will be in the `dist/` directory, ready for deployment.
 
 ## Usage
 
