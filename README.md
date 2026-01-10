@@ -52,6 +52,8 @@ bun run build
 
 This project is a web-based reimplementation inspired by the original **[SPT Quest Builder](https://github.com/ThePi1/SPT-Trader-Builder)** Python desktop application. The original tool was built using PyQt6 and provided the foundation for the quest structure and data formats used in this web version.
 
+[wiki references](https://github.com/sp-tarkov/wiki/tree/main/modding/references)
+
 ## License
 
 MIT License

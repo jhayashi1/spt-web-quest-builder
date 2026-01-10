@@ -163,10 +163,14 @@ export class ConditionBuilder {
                         }];
                         condition = {
                             ...baseCondition,
-                            counter       : {conditions: counterConditions, id: counterId},
-                            oneSessionOnly: false,
-                            type          : 'Completion',
-                            value         : parseInt(formData.get('value') as string) || 1,
+                            completeInSeconds           : parseInt(formData.get('completeInSeconds') as string) || 0,
+                            counter                     : {conditions: counterConditions, id: counterId},
+                            doNotResetIfCounterCompleted: formData.get('doNotResetIfCounterCompleted') === 'on',
+                            isNecessary                 : formData.get('isNecessary') === 'on',
+                            isResetOnConditionFailed    : formData.get('isResetOnConditionFailed') === 'on',
+                            oneSessionOnly              : false,
+                            type                        : formData.get('counterType') as string || 'Completion',
+                            value                       : parseInt(formData.get('value') as string) || 1,
                         };
                         break;
                     }
@@ -180,10 +184,14 @@ export class ConditionBuilder {
                         }];
                         condition = {
                             ...baseCondition,
-                            counter       : {conditions: counterConditions, id: counterId},
-                            oneSessionOnly: false,
-                            type          : 'Completion',
-                            value         : parseInt(formData.get('value') as string) || 1,
+                            completeInSeconds           : parseInt(formData.get('completeInSeconds') as string) || 0,
+                            counter                     : {conditions: counterConditions, id: counterId},
+                            doNotResetIfCounterCompleted: formData.get('doNotResetIfCounterCompleted') === 'on',
+                            isNecessary                 : formData.get('isNecessary') === 'on',
+                            isResetOnConditionFailed    : formData.get('isResetOnConditionFailed') === 'on',
+                            oneSessionOnly              : false,
+                            type                        : formData.get('counterType') as string || 'Completion',
+                            value                       : parseInt(formData.get('value') as string) || 1,
                         };
                         break;
                     }
@@ -197,10 +205,14 @@ export class ConditionBuilder {
                         }];
                         condition = {
                             ...baseCondition,
-                            counter       : {conditions: counterConditions, id: counterId},
-                            oneSessionOnly: false,
-                            type          : 'Completion',
-                            value         : parseInt(formData.get('value') as string) || 1,
+                            completeInSeconds           : parseInt(formData.get('completeInSeconds') as string) || 0,
+                            counter                     : {conditions: counterConditions, id: counterId},
+                            doNotResetIfCounterCompleted: formData.get('doNotResetIfCounterCompleted') === 'on',
+                            isNecessary                 : formData.get('isNecessary') === 'on',
+                            isResetOnConditionFailed    : formData.get('isResetOnConditionFailed') === 'on',
+                            oneSessionOnly              : false,
+                            type                        : formData.get('counterType') as string || 'Completion',
+                            value                       : parseInt(formData.get('value') as string) || 1,
                         };
                         break;
                     }
@@ -213,10 +225,14 @@ export class ConditionBuilder {
                         }];
                         condition = {
                             ...baseCondition,
-                            counter       : {conditions: counterConditions, id: counterId},
-                            oneSessionOnly: false,
-                            type          : 'Exploration',
-                            value         : 1,
+                            completeInSeconds           : parseInt(formData.get('completeInSeconds') as string) || 0,
+                            counter                     : {conditions: counterConditions, id: counterId},
+                            doNotResetIfCounterCompleted: formData.get('doNotResetIfCounterCompleted') === 'on',
+                            isNecessary                 : formData.get('isNecessary') === 'on',
+                            isResetOnConditionFailed    : formData.get('isResetOnConditionFailed') === 'on',
+                            oneSessionOnly              : false,
+                            type                        : formData.get('counterType') as string || 'Exploration',
+                            value                       : 1,
                         };
                         break;
                     }
@@ -228,6 +244,7 @@ export class ConditionBuilder {
                         const targetValue = formData.get('target') as string;
                         counterConditions = [{
                             bodyPart               : bodyPartValue !== 'Any' ? [bodyPartValue] : undefined,
+                            compareMethod          : '>=',
                             conditionType          : 'Kills',
                             daytime                : {from: 0, to: 0},
                             distance               : {compareMethod: '>=', value: 0},
@@ -239,6 +256,7 @@ export class ConditionBuilder {
                             resetOnSessionEnd      : false,
                             savageRole             : targetValue !== 'Any' ? [targetValue] : undefined,
                             target                 : targetValue,
+                            value                  : 1,
                             weapon                 : weaponIds,
                             weaponCaliber          : [],
                             weaponModsExclusive    : [],
@@ -246,10 +264,14 @@ export class ConditionBuilder {
                         }];
                         condition = {
                             ...baseCondition,
-                            counter       : {conditions: counterConditions, id: counterId},
-                            oneSessionOnly: false,
-                            type          : 'Elimination',
-                            value         : parseInt(formData.get('value') as string) || 1,
+                            completeInSeconds           : parseInt(formData.get('completeInSeconds') as string) || 0,
+                            counter                     : {conditions: counterConditions, id: counterId},
+                            doNotResetIfCounterCompleted: formData.get('doNotResetIfCounterCompleted') === 'on',
+                            isNecessary                 : formData.get('isNecessary') === 'on',
+                            isResetOnConditionFailed    : formData.get('isResetOnConditionFailed') === 'on',
+                            oneSessionOnly              : false,
+                            type                        : formData.get('counterType') as string || 'Elimination',
+                            value                       : parseInt(formData.get('value') as string) || 1,
                         };
                         break;
                     }
@@ -264,24 +286,35 @@ export class ConditionBuilder {
                 condition = {
                     ...baseCondition,
                     countInRaid    : formData.get('countInRaid') === 'on',
-                    dogtagLevel    : 0,
+                    dogtagLevel    : parseInt(formData.get('dogtagLevel') as string) || 0,
                     isEncoded      : false,
-                    maxDurability  : 100,
-                    minDurability  : 0,
+                    maxDurability  : parseInt(formData.get('maxDurability') as string) || 100,
+                    minDurability  : parseInt(formData.get('minDurability') as string) || 0,
                     onlyFoundInRaid: formData.get('onlyFoundInRaid') === 'on',
                     target         : targets,
                     value          : parseInt(formData.get('value') as string) || 1,
                 };
+                if (formData.get('parentId')) {
+                    condition.parentId = formData.get('parentId') as string;
+                }
                 break;
             }
 
             case 'LeaveItemAtLocation':
                 condition = {
                     ...baseCondition,
+                    dogtagLevel    : parseInt(formData.get('dogtagLevel') as string) || 0,
+                    maxDurability  : parseInt(formData.get('maxDurability') as string) || 100,
+                    minDurability  : parseInt(formData.get('minDurability') as string) || 0,
                     onlyFoundInRaid: formData.get('onlyFoundInRaid') === 'on',
+                    plantTime      : parseInt(formData.get('plantTime') as string) || 0,
                     target         : [formData.get('target') as string],
+                    value          : parseInt(formData.get('value') as string) || 1,
                     zoneId         : formData.get('zoneId') as string,
                 };
+                if (formData.get('parentId')) {
+                    condition.parentId = formData.get('parentId') as string;
+                }
                 break;
 
             case 'Level':
@@ -328,6 +361,9 @@ export class ConditionBuilder {
                     target       : formData.get('target') as string,
                     value        : parseInt(formData.get('value') as string) || 1,
                 };
+                if (formData.get('parentId')) {
+                    condition.parentId = formData.get('parentId') as string;
+                }
                 break;
 
             case 'VisitPlace':
@@ -402,6 +438,10 @@ export class ConditionBuilder {
                 const targets = Array.isArray(condition.target) ? condition.target.join(', ') : condition.target;
                 this.setFieldValue('target', targets || '');
                 this.setFieldValue('value', String(condition.value || 1));
+                this.setFieldValue('dogtagLevel', String(condition.dogtagLevel || 0));
+                this.setFieldValue('minDurability', String(condition.minDurability || 0));
+                this.setFieldValue('maxDurability', String(condition.maxDurability || 100));
+                this.setFieldValue('parentId', condition.parentId || '');
                 this.setCheckboxValue('onlyFoundInRaid', condition.onlyFoundInRaid || false);
                 this.setCheckboxValue('countInRaid', condition.countInRaid || false);
                 break;
@@ -411,6 +451,12 @@ export class ConditionBuilder {
                 const target = Array.isArray(condition.target) ? condition.target[0] : condition.target;
                 this.setFieldValue('target', target || '');
                 this.setFieldValue('zoneId', condition.zoneId || '');
+                this.setFieldValue('dogtagLevel', String(condition.dogtagLevel || 0));
+                this.setFieldValue('minDurability', String(condition.minDurability || 0));
+                this.setFieldValue('maxDurability', String(condition.maxDurability || 100));
+                this.setFieldValue('plantTime', String(condition.plantTime || 0));
+                this.setFieldValue('value', String(condition.value || 1));
+                this.setFieldValue('parentId', condition.parentId || '');
                 this.setCheckboxValue('onlyFoundInRaid', condition.onlyFoundInRaid || false);
                 break;
             }
@@ -445,6 +491,7 @@ export class ConditionBuilder {
                 this.setFieldValue('target', condition.target as string || '');
                 this.setFieldValue('compareMethod', condition.compareMethod || '>=');
                 this.setFieldValue('value', String(condition.value || 1));
+                this.setFieldValue('parentId', condition.parentId || '');
                 break;
 
             case 'VisitPlace':
@@ -574,9 +621,42 @@ export class ConditionBuilder {
                         </select>
                     </div>
                     <div id="counterSubFields"></div>
-                    <div class="form-group mt-4">
-                        <label for="elimValue">Count/Value</label>
-                        <input type="number" id="elimValue" name="value" class="w-full" min="1" value="1" />
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div class="form-group">
+                            <label for="elimValue">Count/Value</label>
+                            <input type="number" id="elimValue" name="value" class="w-full" min="1" value="1" />
+                        </div>
+                        <div class="form-group">
+                            <label for="counterType">Type Label</label>
+                            <select id="counterType" name="counterType" class="w-full">
+                                <option value="Elimination">Elimination</option>
+                                <option value="Completion">Completion</option>
+                                <option value="Exploration">Exploration</option>
+                                <option value="Multi">Multi</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div class="form-group">
+                            <label for="completeInSeconds">Time Limit (seconds)</label>
+                            <input type="number" id="completeInSeconds" name="completeInSeconds" class="w-full" min="0" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label class="flex items-center gap-2 cursor-pointer mt-6">
+                                <input type="checkbox" name="isNecessary" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                                <span>Is Necessary</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="doNotResetIfCounterCompleted" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                            <span>Don't Reset If Completed</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="isResetOnConditionFailed" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                            <span>Reset On Condition Failed</span>
+                        </label>
                     </div>
                 `;
 
@@ -606,6 +686,26 @@ export class ConditionBuilder {
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="dogtagLevel">Dogtag Level</label>
+                            <input type="number" id="dogtagLevel" name="dogtagLevel" class="w-full" min="0" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label for="parentId">Parent ID</label>
+                            <input type="text" id="parentId" name="parentId" class="w-full" placeholder="Optional parent condition ID" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="minDurability">Min Durability</label>
+                            <input type="number" id="minDurability" name="minDurability" class="w-full" min="0" max="100" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label for="maxDurability">Max Durability</label>
+                            <input type="number" id="maxDurability" name="maxDurability" class="w-full" min="0" max="100" value="100" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" name="onlyFoundInRaid" checked class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
                             <span>Found in Raid Only</span>
@@ -628,6 +728,36 @@ export class ConditionBuilder {
                         <div class="form-group">
                             <label for="leaveZone">Zone ID</label>
                             <input type="text" id="leaveZone" name="zoneId" class="w-full" placeholder="Drop zone" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="dogtagLevel">Dogtag Level</label>
+                            <input type="number" id="dogtagLevel" name="dogtagLevel" class="w-full" min="0" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label for="leaveQuantity">Quantity</label>
+                            <input type="number" id="leaveQuantity" name="value" class="w-full" min="1" value="1" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="minDurability">Min Durability</label>
+                            <input type="number" id="minDurability" name="minDurability" class="w-full" min="0" max="100" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label for="maxDurability">Max Durability</label>
+                            <input type="number" id="maxDurability" name="maxDurability" class="w-full" min="0" max="100" value="100" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="plantTime">Plant Time (seconds)</label>
+                            <input type="number" id="plantTime" name="plantTime" class="w-full" min="0" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label for="parentId">Parent ID</label>
+                            <input type="text" id="parentId" name="parentId" class="w-full" placeholder="Optional parent condition ID" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -746,6 +876,10 @@ export class ConditionBuilder {
                             <label for="tlLevel">Level</label>
                             <input type="number" id="tlLevel" name="value" class="w-full" min="1" max="4" value="1" />
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="parentId">Parent ID</label>
+                        <input type="text" id="parentId" name="parentId" class="w-full" placeholder="Optional parent condition ID" />
                     </div>
                 `;
                 break;

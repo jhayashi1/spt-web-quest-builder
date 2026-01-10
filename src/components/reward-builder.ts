@@ -136,7 +136,7 @@ export class RewardBuilder {
             availableInGameEditions: [],
             id,
             index                  : 0,
-            unknown                : true,
+            unknown                : formData.get('unknown') !== 'on',
         };
 
         let reward: Reward;
@@ -242,6 +242,7 @@ export class RewardBuilder {
         switch (reward.type) {
             case 'Achievement':
                 this.setFieldValue('achievementId', reward.target || '');
+                this.setCheckboxValue('unknown', reward.unknown === true);
                 break;
 
             case 'AssortmentUnlock': {
@@ -250,35 +251,41 @@ export class RewardBuilder {
                 this.setFieldValue('trader', traderName);
                 this.setFieldValue('loyaltyLevel', String(reward.loyaltyLevel || 1));
                 this.setFieldValue('itemTpl', reward.items?.[0]?._tpl || '');
+                this.setCheckboxValue('unknown', reward.unknown === true);
                 break;
             }
 
             case 'Experience':
             case 'StashRows':
                 this.setFieldValue('value', String(reward.value || 0));
+                this.setCheckboxValue('unknown', reward.unknown === true);
                 break;
 
             case 'Item':
                 this.setFieldValue('itemTpl', reward.items?.[0]?._tpl || '');
                 this.setFieldValue('value', String(reward.value || 1));
                 this.setCheckboxValue('findInRaid', reward.findInRaid || false);
+                this.setCheckboxValue('unknown', reward.unknown === true);
                 break;
 
             case 'Skill':
                 this.setFieldValue('skill', reward.target || '');
                 this.setFieldValue('value', String(reward.value || 0));
+                this.setCheckboxValue('unknown', reward.unknown === true);
                 break;
 
             case 'TraderStanding': {
                 const tsTraderName = Object.entries(TRADERS).find(([_, id]) => id === reward.target)?.[0] || 'Prapor';
                 this.setFieldValue('trader', tsTraderName);
                 this.setFieldValue('value', String(reward.value || 0));
+                this.setCheckboxValue('unknown', reward.unknown === true);
                 break;
             }
 
             case 'TraderUnlock': {
                 const tuTraderName = Object.entries(TRADERS).find(([_, id]) => id === reward.target)?.[0] || 'Prapor';
                 this.setFieldValue('trader', tuTraderName);
+                this.setCheckboxValue('unknown', reward.unknown === true);
                 break;
             }
         }
@@ -322,6 +329,12 @@ export class RewardBuilder {
                         <label for="achId">Achievement ID</label>
                         <input type="text" id="achId" name="achievementId" class="w-full" placeholder="Achievement identifier" />
                     </div>
+                    <div class="form-group">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="unknown" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                            <span>Hide Reward (?)</span>
+                        </label>
+                    </div>
                 `;
                 break;
 
@@ -343,6 +356,12 @@ export class RewardBuilder {
                         <label for="asuItemTpl">Item Template ID</label>
                         <input type="text" id="asuItemTpl" name="itemTpl" class="w-full" placeholder="Item to unlock for purchase" />
                     </div>
+                    <div class="form-group">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="unknown" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                            <span>Hide Reward (?)</span>
+                        </label>
+                    </div>
                 `;
                 break;
 
@@ -351,6 +370,12 @@ export class RewardBuilder {
                     <div class="form-group">
                         <label for="expValue">Experience Amount</label>
                         <input type="number" id="expValue" name="value" class="w-full" min="0" value="1000" />
+                    </div>
+                    <div class="form-group">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="unknown" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                            <span>Hide Reward (?)</span>
+                        </label>
                     </div>
                 `;
                 break;
@@ -367,10 +392,14 @@ export class RewardBuilder {
                             <input type="number" id="itemCount" name="value" class="w-full" min="1" value="1" />
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="grid grid-cols-2 gap-4">
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" id="itemFir" name="findInRaid" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
                             <span>Found in Raid</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="unknown" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                            <span>Hide Reward (?)</span>
                         </label>
                     </div>
                 `;
@@ -390,6 +419,12 @@ export class RewardBuilder {
                             <input type="number" id="skillValue" name="value" class="w-full" min="0" value="100" />
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="unknown" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                            <span>Hide Reward (?)</span>
+                        </label>
+                    </div>
                 `;
                 break;
 
@@ -398,6 +433,12 @@ export class RewardBuilder {
                     <div class="form-group">
                         <label for="stashRows">Number of Rows</label>
                         <input type="number" id="stashRows" name="value" class="w-full" min="1" value="1" />
+                    </div>
+                    <div class="form-group">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="unknown" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                            <span>Hide Reward (?)</span>
+                        </label>
                     </div>
                 `;
                 break;
@@ -416,6 +457,12 @@ export class RewardBuilder {
                             <input type="number" id="tsValue" name="value" class="w-full" step="0.01" value="0.02" />
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="unknown" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                            <span>Hide Reward (?)</span>
+                        </label>
+                    </div>
                 `;
                 break;
 
@@ -426,6 +473,12 @@ export class RewardBuilder {
                         <select id="tuTrader" name="trader" class="w-full">
                             ${Object.keys(TRADERS).map(t => `<option value="${t}">${t}</option>`).join('')}
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="unknown" class="rounded border-tarkov-border bg-tarkov-surface text-tarkov-accent" />
+                            <span>Hide Reward (?)</span>
+                        </label>
                     </div>
                 `;
                 break;

@@ -2,6 +2,7 @@ node_modules
 dist
 *.zip
 SPT-Trader-Builder/
+docs/
 
 **/.terraform/*
 *.terraform.lock.hcl

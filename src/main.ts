@@ -408,19 +408,24 @@ class QuestBuilder {
         const messages = createDefaultMessages(id);
 
         const quest: Quest = {
-            _id                       : id,
-            QuestName                 : 'New Quest',
+            _id                         : id,
+            QuestName                   : 'New Quest',
             ...messages,
-            canShowNotificationsInGame: true,
-            conditions                : {
+            acceptanceAndFinishingSource: 'eft',
+            arenaLocations              : [],
+            canShowNotificationsInGame  : true,
+            conditions                  : {
                 AvailableForFinish: [],
                 AvailableForStart : [],
                 Fail              : [],
             },
+            gameModes      : [],
             image          : '/files/quest/icon/quest.png',
             instantComplete: false,
             isKey          : false,
             location       : 'any',
+            progressSource : 'eft',
+            rankingModes   : [],
             restartable    : false,
             rewards        : {
                 Fail   : [],
@@ -485,26 +490,31 @@ class QuestBuilder {
 
         const quest: Quest = {
             ...this.quests[this.currentQuestId],
-            acceptPlayerMessage       : formData.get('acceptPlayerMessage') as string || this.quests[this.currentQuestId].acceptPlayerMessage,
-            canShowNotificationsInGame: formData.get('canShowNotifications') === 'on',
-            changeQuestMessageText    : formData.get('changeQuestMessageText') as string || this.quests[this.currentQuestId].changeQuestMessageText,
-            completePlayerMessage     : formData.get('completePlayerMessage') as string || this.quests[this.currentQuestId].completePlayerMessage,
-            declinePlayerMessage      : formData.get('declinePlayerMessage') as string || this.quests[this.currentQuestId].declinePlayerMessage,
-            description               : formData.get('description') as string,
-            failMessageText           : formData.get('failMessageText') as string || this.quests[this.currentQuestId].failMessageText,
-            image                     : (formData.get('imagePath') as string) || '/files/quest/icon/quest.png',
-            instantComplete           : formData.get('instantComplete') === 'on',
-            isKey                     : formData.get('isKey') === 'on',
-            location                  : formData.get('location') as Quest['location'],
-            note                      : formData.get('note') as string || this.quests[this.currentQuestId].note,
-            QuestName                 : formData.get('questName') as string,
-            restartable               : formData.get('restartable') === 'on',
-            secretQuest               : formData.get('secretQuest') === 'on',
-            side                      : formData.get('faction') as Quest['side'],
-            startedMessageText        : formData.get('startedMessageText') as string || this.quests[this.currentQuestId].startedMessageText,
-            successMessageText        : formData.get('successMessageText') as string || this.quests[this.currentQuestId].successMessageText,
-            traderId                  : TRADERS[traderName],
-            type                      : formData.get('questType') as Quest['type'],
+            acceptanceAndFinishingSource: this.quests[this.currentQuestId].acceptanceAndFinishingSource || 'eft',
+            acceptPlayerMessage         : formData.get('acceptPlayerMessage') as string || this.quests[this.currentQuestId].acceptPlayerMessage,
+            arenaLocations              : this.quests[this.currentQuestId].arenaLocations || [],
+            canShowNotificationsInGame  : formData.get('canShowNotifications') === 'on',
+            changeQuestMessageText      : formData.get('changeQuestMessageText') as string || this.quests[this.currentQuestId].changeQuestMessageText,
+            completePlayerMessage       : formData.get('completePlayerMessage') as string || this.quests[this.currentQuestId].completePlayerMessage,
+            declinePlayerMessage        : formData.get('declinePlayerMessage') as string || this.quests[this.currentQuestId].declinePlayerMessage,
+            description                 : formData.get('description') as string,
+            failMessageText             : formData.get('failMessageText') as string || this.quests[this.currentQuestId].failMessageText,
+            gameModes                   : this.quests[this.currentQuestId].gameModes || [],
+            image                       : (formData.get('imagePath') as string) || '/files/quest/icon/quest.png',
+            instantComplete             : formData.get('instantComplete') === 'on',
+            isKey                       : formData.get('isKey') === 'on',
+            location                    : formData.get('location') as Quest['location'],
+            note                        : formData.get('note') as string || this.quests[this.currentQuestId].note,
+            progressSource              : this.quests[this.currentQuestId].progressSource || 'eft',
+            QuestName                   : formData.get('questName') as string,
+            rankingModes                : this.quests[this.currentQuestId].rankingModes || [],
+            restartable                 : formData.get('restartable') === 'on',
+            secretQuest                 : formData.get('secretQuest') === 'on',
+            side                        : formData.get('faction') as Quest['side'],
+            startedMessageText          : formData.get('startedMessageText') as string || this.quests[this.currentQuestId].startedMessageText,
+            successMessageText          : formData.get('successMessageText') as string || this.quests[this.currentQuestId].successMessageText,
+            traderId                    : TRADERS[traderName],
+            type                        : formData.get('questType') as Quest['type'],
         };
 
         this.quests[this.currentQuestId] = quest;
@@ -547,14 +557,14 @@ class QuestBuilder {
         for (const category of ['AvailableForStart', 'AvailableForFinish', 'Fail'] as const) {
             quest.conditions[category].forEach(condition => {
                 const item = document.createElement('div');
-                item.className = 'flex items-center justify-between p-2 bg-tarkov-surface rounded border border-tarkov-border hover:border-tarkov-accent cursor-pointer transition-colors';
+                item.className = 'group flex items-center justify-between p-2 bg-tarkov-surface rounded border border-tarkov-border hover:border-tarkov-accent cursor-pointer transition-colors';
                 const categoryLabel = category === 'AvailableForStart' ? 'Start' : category === 'AvailableForFinish' ? 'Finish' : 'Fail';
                 item.innerHTML = `
                     <div class="flex-1 edit-condition" data-id="${condition.id}" data-category="${category}">
                         <span class="text-tarkov-accent">[${categoryLabel}]</span>
                         <span class="text-tarkov-text">${condition.conditionType}</span>
                     </div>
-                    <button type="button" class="text-tarkov-danger hover:text-red-400 delete-condition ml-2 px-2" data-id="${condition.id}" data-category="${category}">&times;</button>
+                    <button type="button" class="delete-condition flex-shrink-0 w-6 h-6 flex items-center justify-center cursor-pointer sm:opacity-0 sm:group-hover:opacity-100 text-tarkov-danger hover:text-red-400 hover:bg-tarkov-danger/20 rounded transition-all text-lg leading-none" data-id="${condition.id}" data-category="${category}">&times;</button>
                 `;
                 list.appendChild(item);
             });
@@ -612,14 +622,14 @@ class QuestBuilder {
         for (const timing of ['Success', 'Started', 'Fail'] as const) {
             quest.rewards[timing].forEach(reward => {
                 const item = document.createElement('div');
-                item.className = 'flex items-center justify-between p-2 bg-tarkov-surface rounded border border-tarkov-border hover:border-tarkov-accent cursor-pointer transition-colors';
+                item.className = 'group flex items-center justify-between p-2 bg-tarkov-surface rounded border border-tarkov-border hover:border-tarkov-accent cursor-pointer transition-colors';
                 item.innerHTML = `
                     <div class="flex-1 edit-reward" data-id="${reward.id}" data-timing="${timing}">
                         <span class="text-tarkov-accent">[${timing}]</span>
                         <span class="text-tarkov-text">${reward.type}</span>
                         ${this.getRewardValueDisplay(reward)}
                     </div>
-                    <button type="button" class="text-tarkov-danger hover:text-red-400 delete-reward ml-2 px-2" data-id="${reward.id}" data-timing="${timing}">&times;</button>
+                    <button type="button" class="delete-reward flex-shrink-0 w-6 h-6 flex items-center justify-center cursor-pointer sm:opacity-0 sm:group-hover:opacity-100 text-tarkov-danger hover:text-red-400 hover:bg-tarkov-danger/20 rounded transition-all text-lg leading-none" data-id="${reward.id}" data-timing="${timing}">&times;</button>
                 `;
                 list.appendChild(item);
             });

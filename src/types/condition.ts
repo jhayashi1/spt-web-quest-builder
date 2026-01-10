@@ -4,9 +4,17 @@ export interface Counter {
     id: string;
 }
 
+/** Visibility condition for hiding tasks until prerequisites are met */
+export interface VisibilityCondition {
+    conditionType: 'CompleteCondition';
+    id: string;
+    target: string; // ID of the condition that must be completed
+}
+
 /** Counter condition for kills, exit status, exit name, etc. */
 export interface CounterCondition {
     bodyPart?: string[];
+    compareMethod?: string;
     conditionType: string;
     daytime?: {from: number; to: number};
     distance?: {compareMethod: string; value: number};
@@ -21,6 +29,7 @@ export interface CounterCondition {
     savageRole?: string[];
     status?: string[];
     target?: string;
+    value?: number;
     weapon?: string[];
     weaponCaliber?: string[];
     weaponModsExclusive?: string[];
@@ -31,15 +40,19 @@ export interface CounterCondition {
 export interface QuestCondition {
     availableAfter?: number;
     compareMethod?: string;
+    completeInSeconds?: number;
     conditionType: string;
     counter?: Counter;
     countInRaid?: boolean;
     dogtagLevel?: number;
+    doNotResetIfCounterCompleted?: boolean;
     dynamicLocale?: boolean;
     globalQuestCounterId?: string;
     id: string;
     index?: number;
     isEncoded?: boolean;
+    isNecessary?: boolean;
+    isResetOnConditionFailed?: boolean;
     maxDurability?: number;
     minDurability?: number;
     oneSessionOnly?: boolean;
@@ -50,7 +63,7 @@ export interface QuestCondition {
     target?: string | string[];
     type?: string;
     value?: number;
-    visibilityConditions?: unknown[];
+    visibilityConditions?: VisibilityCondition[];
     zoneId?: string;
 }
 
